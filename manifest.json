@@ -1,0 +1,40 @@
+{
+  "id": "DRAMATIC_SKY_RIDE",
+  "name": "Dramatic Sky Ride",
+  "version": "0.2.19",
+  "api": 2,
+  "entry": "main.lua",
+  "profile": "content",
+  "category": "GAMEPLAY",
+  "game_version": "0.0.0-dev || >=0.1.69 <2.0.0",
+  "priority": 900,
+  "dependencies": [],
+  "optional_dependencies": [
+    "PokePCFollowers_VoxelMerge",
+    "overworld_wild_spawns",
+    "BATTLE_ART_VOXEL_FORK@>=1.7.6 <2.0.0",
+    "DRAMALESS_SHAPE@>=1.6.4 <2.0.0",
+    "STADIUM_OVERWORLD_MODELS",
+    "STADIUM2_OVERWORLD_MODELS",
+    "CRYSTAL_251@>=0.9.13 <1.0.0",
+    "wild_skies@>=1.4.1 <2.0.0",
+    "otf-player-switcher",
+    "Music_FRLG",
+    "Music_HGSS",
+    "Music_LGPE"
+  ],
+  "conflicts": [
+    "free_fly"
+  ],
+  "permissions": [
+    "engine_internals",
+    "filesystem"
+  ],
+  "affects_link": false,
+  "description": "Controllable Flight, Ground Ride and Visible Surf mounts for Gen1Recomp, including optional animated Pokemon Stadium 2 mounts, Generation II support, Wild Skies integration, Battle Art/Dramaless compatibility and renderer-independent native 2D flight.",
+  "github": "mfrtechconsult/dramatic-sky-ride",
+  "games": [
+    "gen1",
+    "gen2"
+  ]
+}

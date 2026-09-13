@@ -1,0 +1,46 @@
+return {
+  summary = "Ride compatible Gen 1 and Gen 2 Pokemon on land, water and in the air with native 2D flight, PokePC sprites and optional voxel rendering.",
+  author = "MFR TechConsult",
+  tags = { "flying", "mount", "ground-ride", "surf", "2d", "voxel", "wild-skies", "gen2" },
+  differences = {
+    changed = {
+      "native flat 2D flight no longer requires a voxel provider",
+      "the maintained mfrtechconsult/PokePCFollowers fork provides the currently validated Pokemon mount sprites",
+      "PokéPC Followers is no longer a hard requirement for native 2D flight",
+      "followers are hidden while mounted by default; GROUND FOLLOWERS is an optional land Ground Ride-only display setting",
+      "Battle Art Voxel Fork and Dramaless Shape are optional voxel providers rather than flight requirements",
+      "Battle Art remains preferred automatically if multiple supported voxel providers are active",
+      "Dramaless uses J for Ground Ride because it reserves G for V-GRID; controller X/Y remain unchanged",
+      "global FLIGHT SPEED and GROUND SPEED settings scale all mounts while retaining species profiles, boost and gallop",
+      "canonical flight interoperability uses isFlying(), altitude() and mount() independently of the selected renderer",
+      "Wild Skies 1.9.0+ is the validated Gen 2 airborne encounter integration"
+    },
+    added = {
+      "native 2D rider-plus-mount composition with Pokedex-proportional sizing",
+      "optional Flying Music integration with installed FRLG, HGSS and LGPE music packs without redistributing audio",
+      "Gen 2 flight mounts including Noctowl, Crobat, Xatu, Skarmory, Lugia and Ho-Oh when those species exist in the game",
+      "Gen 2 Ground Ride mounts including Meganium, Girafarig, Ursaring, Donphan, Stantler, Raikou, Entei, Suicune and Tyranitar",
+      "Gen 2 visible Surf mounts including Feraligatr, Mantine, Kingdra and Lugia",
+      "Gen 2 Pokedex-proportional size controls and curated Ground Ride speed/gallop profiles",
+      "Suicune-exclusive seamless land-to-water Ground Ride while normal Surf progression remains required",
+      "public airborne 2D sprite-source registration API for compatible external sprite providers"
+    },
+    known = {
+      "HGSS-style overworld sprites can currently fail to display on the Generation II path; a fix is planned for an upcoming release",
+      "Wilds of Kanto compatibility is still under development and is not currently supported",
+      "with GROUND FOLLOWERS enabled, the current Ground Ride mount can still appear in the follower trail; the option is OFF by default",
+      "the optional Stadium renderer remains experimental",
+      "rider seating uses procedural offsets rather than dedicated seated trainer sprites",
+      "tall-building safety uses authored zones plus available terrain-height data"
+    }
+  },
+  credits = {
+    { who = "ShaneHudson/gen1recomp-mods", for_ = "Free Fly/Wild Skies public interoperability and renderer-independent flight patterns" },
+    { who = "YoDrehDenSwagAuf/overworld-spawn-mod", for_ = "Wilds of Kanto follower and overworld Pokemon ecosystem" },
+    { who = "mfrtechconsult/PokePCFollowers", for_ = "maintained Gen 1/2 follower sprite provider and compatibility fork" },
+    { who = "absol89/DramaticShapeVoxelMod", for_ = "Battle Art Voxel Fork and voxel camera integration" },
+    { who = "artyrambles/DRAMALESS_SHAPE", for_ = "Dramaless Shape voxel provider and public integration surface" },
+    { who = "DarioMelo/Gen1Recomp-MusicMods", for_ = "optional FRLG/HGSS/LGPE music providers" }
+  },
+  compat = { engine = ">=0.1.69 <2.0.0", modApi = 2 }
+}
