@@ -60,6 +60,10 @@ local function installFirstPersonGoldTopBridge()
   if dramaticFirstPerson.dramaticSkyRideGen2TopBridge then return end
   local nativeOnTop = dramaticFirstPerson.onTop
   dramaticFirstPerson.onTop = function()
+    -- Modern Battle Art understands the native world/empty-stack contract.
+    -- Its predicate allows ordinary in-progress steps; DSR's mounting gate
+    -- deliberately refuses them and must not interrupt grounded camera walk.
+    if dramaticFirstPerson.supportsGen2World then return nativeOnTop() end
     if isGold() then return freeRoam(liveWorld()) end
     return nativeOnTop()
   end

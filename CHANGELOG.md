@@ -1,3 +1,13 @@
+## 0.2.20 — Native Crystal camera input
+
+When Battle Art advertises native Gen 2 world support, its camera input
+predicate remains authoritative. The older Sky Ride bridge used the mounting
+predicate, which refuses in-progress steps, interrupting ordinary 1ST/3RD
+walking. Older providers retain the existing bridge; flight handling is unchanged.
+Verified with Battle Art's Crystal camera driver: both rungs walk east through
+native completed grid steps while forward is held at an east-facing camera yaw.
+The bridge regression test covers modern/legacy providers on both generations.
+
 ## [0.2.19] - 2026-09-13 - JohtoDioramaCart fork: the Crystal rider crash
 
 Forked from burgerslayer7/dramatic-sky-ride v0.2.18. One fix, Generation
