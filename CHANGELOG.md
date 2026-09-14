@@ -1,3 +1,7 @@
+## 0.2.21 — 2026-09-13
+
+Remove the temporary New Bark Town mount gift NPC from the production entry list. That development helper could grant level-50 Ho-Oh, Suicune, Raikou and Gyarados when spoken to. No existing party or PC Pokemon are deleted. Camera-owner regression and a real Crystal boot without the test giver pass.
+
 ## 0.2.20 — Native Crystal camera input
 
 When Battle Art advertises native Gen 2 world support, its camera input
