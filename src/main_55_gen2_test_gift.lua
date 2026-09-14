@@ -1,7 +1,7 @@
 ;(function()
--- Temporary Gold test helper.  It deliberately stays runtime-only: no map
--- object or claimed gift flag is serialized, and the entire layer is skipped
--- by Gen 1.  Remove this part once the Gen 2 mount test pass is complete.
+-- User-requested Gen 2 mount test helper. The NPC stays runtime-only and
+-- gifts are granted only by talking to it; boot never changes the party.
+-- Gen 1 skips this layer. Existing party/PC species prevent duplicate gifts.
 
 local generation = mod.exports.runtimeGeneration or {}
 local isGen2Runtime = generation.isGen2 or function() return false end
@@ -203,7 +203,7 @@ local function ensureTestNpc(mapId)
     },
   })
   if npcId then
-    log("temporary Gen 2 test giver spawned in New Bark Town")
+    log("Gen 2 test giver spawned in New Bark Town")
   elseif err then
     log("Gold test giver spawn failed: %s", tostring(err))
   end
@@ -222,5 +222,5 @@ mod.events:on("game.ready", function(ev)
   ensureTestNpc(mapId)
 end)
 
-log("temporary New Bark Town Gen 2 mount giver loaded")
+log("New Bark Town Gen 2 mount test giver loaded")
 end)();

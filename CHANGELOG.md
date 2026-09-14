@@ -1,3 +1,11 @@
+## 0.2.22 — 2026-09-14
+
+Restore the requested New Bark Town test scientist at cell (9,10). Talking to
+him grants missing level-50 Ho-Oh (Fly), Suicune (Surf), Raikou and Gyarados
+(Surf), using the party then PC. Boot/map entry grants nothing; existing owned
+species prevent duplicates. The NPC is runtime-only and Gen 2-only. Focused
+gift tests and a native Crystal scene verify presence without party changes.
+
 ## 0.2.21 — 2026-09-13
 
 Remove the temporary New Bark Town mount gift NPC from the production entry list. That development helper could grant level-50 Ho-Oh, Suicune, Raikou and Gyarados when spoken to. No existing party or PC Pokemon are deleted. Camera-owner regression and a real Crystal boot without the test giver pass.

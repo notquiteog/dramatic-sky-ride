@@ -89,6 +89,7 @@ main_44_stadium2_diagnostics.lua
 main_54_settings_ux.lua
 main_56_gen2_player_bridge.lua
 main_57_gen2_ground_water_bridge.lua
+main_55_gen2_test_gift.lua
 main_58_gen2_voxel_interop.lua
 main_59_gen2_voxel_visual_fixes.lua
 main_60_gen2_voxel_runtime_compat.lua

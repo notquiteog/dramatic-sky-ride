@@ -4,6 +4,11 @@ Dramatic Sky Ride adds controllable **Flight**, **Ground Ride** and **Visible Su
 
 DSR remains the gameplay owner: movement, collision, altitude, progression, mounted state, rider placement and mount sizing stay inside Dramatic Sky Ride. Companion mods provide sprites, world rendering, airborne encounters, music or Stadium assets without taking over DSR's core mount logic.
 
+The Gen 2 build includes the requested **New Bark Town test scientist** at
+(9,10). Speak to him for missing level-50 Ho-Oh, Suicune, Raikou and Gyarados,
+with Fly/Surf supplied where applicable. He changes no party or PC data until
+you interact, and skips species you already own.
+
 ## Quick start
 
 ### Required
