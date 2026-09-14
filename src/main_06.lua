@@ -9,32 +9,27 @@
         end
       end
     end
-    local encoded = out:encode("png")
-    local bytes = encoded and encoded.getString and encoded:getString() or encoded
-    if type(bytes) ~= "string" or not love.filesystem.write(path, bytes) then
-      error("rider_png_write_failed")
-    end
+    riderData[path] = out
+    if src.release then src:release() end
     return path
   end)
   if not ok then return nil, result end
   return result
 end
 
+end -- runtime rider asset scope
+
 local function buildRiderSprite(player)
   local sourceSprite = mod.exports._riderSourceSprite(player)
   if not sourceSprite then return nil, "player_sprite_missing" end
   local path, reason = writeRiderSheet(player, sourceSprite)
   if not path then
-    -- Palette correctness is more important than cropping. An unusual port
-    -- without ImageData encoding falls back to the live player renderer.
+    -- An unusual port without CPU-readable image data keeps the player
+    -- visible through the original palette-aware renderer.
     return sourceSprite, "uncropped_fallback:" .. tostring(reason)
   end
-  -- The sprite renderer reads crop files through the engine's own Assets at
-  -- the game root.  Some hosts reroute mod filesystem writes to the mod's
-  -- private storage, so a crop the renderer will not be able to open must
-  -- fall back to the live player renderer here rather than crash the draw
-  -- (Crystal's SPRITE_CHRIS rider was that crash).  Verification is the
-  -- exact reader the renderer uses.
+  -- Verify the same asset seam SpriteRenderer and Battle Art use. A custom
+  -- host without the generated-image bridge retains the native fallback.
   do
     local okAssets, RenderAssets = pcall(require, "src.render.Assets")
     if okAssets and RenderAssets and type(RenderAssets.image) == "function" then

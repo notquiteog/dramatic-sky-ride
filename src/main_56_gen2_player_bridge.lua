@@ -392,22 +392,24 @@ mod.hooks:wrap("movement.collision", function(next, allowed, ctx)
   return next(allowed, ctx)
 end, 120)
 
--- Outermost Gold tick: the engine and every earlier compatibility layer first
--- get a chance to alter player state, then the mount becomes the actual sprite
--- that Gold will draw on this frame.
-local previousUpdate = OverworldState.update
-function OverworldState:update(dt, ...)
-  local result = previousUpdate(self, dt, ...)
-  if isGold() and Game.overworld == self then
-    if flight.active then installFlightGuards(self) else restoreFlightGuards() end
-    suppressFlightTerrainFx(self)
-    reconcilePlayerVisual(self)
+-- Reconcile on the public frame seam. Other compatibility controllers can
+-- own the facade update chain; that must not leave Gold drawing its native
+-- trainer while the rider entity is already mounted above it.
+mod.hooks:wrap("core.update", function(next, game, dt)
+  local result = next(game, dt)
+  local world = liveWorld()
+  if isGold() and world then
+    if flight.active then installFlightGuards(world) else restoreFlightGuards() end
+    suppressFlightTerrainFx(world)
+    reconcilePlayerVisual(world)
+    if ground and ground.active then ensureGroundRiderEntity(world) end
+    if flight.active then ensureRiderEntity(world) end
   else
     restoreFlightGuards()
     restorePlayerVisual()
   end
   return result
-end
+end)
 
 mod.exports.gen2PlayerBridge = {
   active = function() return isGold() and visual.player ~= nil end,

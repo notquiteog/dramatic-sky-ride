@@ -1,3 +1,14 @@
+## [0.2.23] - in-memory rider assets, public frame seam
+
+- The rider crop is served through Assets in memory: the mod hooks the
+  engine asset reader for its runtime rider paths, so the crop stays
+  palette-aware without relying on a private-storage file being readable
+  by the engine renderer. Registered for release with the session.
+- The Gold mount reconcile moves to the public core.update seam: other
+  compatibility controllers can own the facade update chain without
+  leaving Gold drawing its native trainer while the rider is mounted.
+- A Gen 2 mount visual driver test joins the suite.
+
 ## 0.2.22 — 2026-09-14
 
 Restore the requested New Bark Town test scientist at cell (9,10). Talking to

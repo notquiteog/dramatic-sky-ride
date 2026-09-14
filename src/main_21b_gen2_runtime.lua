@@ -12,9 +12,12 @@
 -- validation, per the upstream migration guide.
 
 local baseOptionValue = optionValue
+local okVersion, GameVersion = pcall(require, "src.core.GameVersion")
 
 local function isGen2Runtime(game)
   if not game then return false end
+  if okVersion and GameVersion and type(GameVersion.generation) == "function"
+      and GameVersion.generation() == 2 then return true end
 
   -- Game's Gen2Compat facade forwards unknown data members to Game2.data, so
   -- these native Gen 2 registries are the strongest non-version-string signal.

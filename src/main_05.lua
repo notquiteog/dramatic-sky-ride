@@ -102,10 +102,9 @@ local function buildMountSprite(species)
 end
 
 
--- The rider uses a cropped copy of the raw player sheet written into the
--- LÖVE save filesystem. Keeping it as a normal sprite asset, rather than a
--- pre-coloured Canvas, lets SpriteRenderer and Dramatic Shape recolour it on
--- every COLORS mode exactly like the original player sprite.
+-- The rider uses a cropped raw player sheet served through Assets in memory.
+-- It stays palette-aware without relying on a private-storage file being
+-- readable by the engine renderer.
 local function shallowCopy(source)
   local out = {}
   for k, v in pairs(source or {}) do out[k] = v end
@@ -133,24 +132,39 @@ mod.exports._riderSourceSprite = function(player)
   return player and player.sprite or nil
 end
 
-local function writeRiderSheet(player, sourceSprite)
-  sourceSprite = sourceSprite or mod.exports._riderSourceSprite(player)
-  local sourceDef = sourceSprite and sourceSprite.def or nil
-  local sourcePath = sourceDef and sourceDef.image
-  if not sourcePath then return nil, "player_image_missing" end
-  if not (love and love.image and love.image.newImageData
-          and love.filesystem and love.filesystem.createDirectory) then
-    return nil, "image_write_unavailable"
+local writeRiderSheet
+do
+local riderData, riderImages = {}, {}
+local nativeAssetImage, nativeAssetData = Assets.image, Assets.imageData
+Assets.image = function(path)
+  if riderData[path] then
+    if not riderImages[path] then
+      riderImages[path] = love.graphics.newImage(riderData[path])
+      setNearest(riderImages[path])
+    end
+    return riderImages[path]
   end
+  return nativeAssetImage(path)
+end
+Assets.imageData = function(path)
+  if riderData[path] then return riderData[path]:clone() end
+  return nativeAssetData(path)
+end
+Assets.register({release=function()
+  for _,img in pairs(riderImages) do if img.release then img:release() end end
+  for _,data in pairs(riderData) do if data.release then data:release() end end
+  riderData,riderImages={},{}
+end})
 
-  local name = safeAssetName(sourceDef.id or sourcePath)
-  local path = string.format("%s/rider_%s_c%d_y%d.png",
-    RIDER_RUNTIME_DIR, name, RIDER_CROP_HEIGHT, RIDER_CROP_Y)
-  if fileExists(path) then return path end
-
+writeRiderSheet = function(player, sourceSprite)
+  sourceSprite = sourceSprite or mod.exports._riderSourceSprite(player)
+  local sourceDef = sourceSprite and sourceSprite.def
+  if not (sourceDef and sourceDef.image) then return nil, "player_image_missing" end
+  local path = mod.path .. "/runtime/rider_" .. safeAssetName(sourceDef.image)
+    .. "_" .. RIDER_CROP_HEIGHT .. "_" .. RIDER_CROP_Y .. ".png"
+  if riderData[path] then return path end
   local ok, result = pcall(function()
-    love.filesystem.createDirectory(RIDER_RUNTIME_DIR)
-    local src = Assets.imageData(sourcePath)
+    local src = nativeAssetData(sourceDef.image)
     local sw, sh = src:getDimensions()
     if sw < 16 or sh < 16 then error("unexpected_player_sheet_size") end
     local sourceFrames = math.max(1, math.floor(sh / 16))
