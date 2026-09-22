@@ -290,6 +290,10 @@ local function decorateGlobalRows(out)
   return out
 end
 
+-- Register our own schema with the in-game menus before applying the
+-- existing simple/advanced filter. The launcher schema stays complete.
+assert((loadstring or load)(assert(mod:read('lib/InGameOptions.lua')),'@ride/options'))().install(mod,OPTION_SCHEMA,'DRAMATIC RIDE')
+
 mod.hooks:wrap("ui.options.rows", function(next, game, rows)
   local out = next(game, rows)
   if type(out) ~= "table" then return out end

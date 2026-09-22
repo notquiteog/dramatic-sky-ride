@@ -1,3 +1,7 @@
+## Unreleased — in-game settings
+
+Add missing in-game OPTIONS rows in Gen 1/2, preserving stored values and the existing settings filters. Tested on Gen1Recomp 0.3.0.
+
 ## [0.2.23] - in-memory rider assets, public frame seam
 
 - The rider crop is served through Assets in memory: the mod hooks the
