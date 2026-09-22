@@ -2,6 +2,9 @@
 -- Source chunks are line-preserving and concatenated before compilation.
 
 local mod = ...
+if require("src.core.GameVersion").generation()==3 then
+  return assert((loadstring or load)(assert(mod:read("lib/gen3/init.lua")), "@ride/gen3"))()(mod)
+end
 local index = mod:read("src/parts.txt")
 if not index then
   error("DRAMATIC_SKY_RIDE: missing src/parts.txt — reinstall the mod", 0)

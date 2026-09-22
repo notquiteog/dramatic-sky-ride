@@ -91,6 +91,10 @@ local function buildGroundMountSprite(species)
   return sprite
 end
 
+mod.exports.networkSprites.ground = function(species)
+  if GROUND_ELIGIBLE[species] then return buildGroundMountSprite(species) end
+end
+
 local function removeGroundRiderEntity(ow)
   local entity = ground.riderEntity
   if not entity then return end

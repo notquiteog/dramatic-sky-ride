@@ -102,6 +102,10 @@ local function buildMountSprite(species)
 end
 
 
+mod.exports.networkSprites = { fly = function(species)
+  if ELIGIBLE[species] then return buildMountSprite(species) end
+end }
+
 -- The rider uses a cropped raw player sheet served through Assets in memory.
 -- It stays palette-aware without relying on a private-storage file being
 -- readable by the engine renderer.

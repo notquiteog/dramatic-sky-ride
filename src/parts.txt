@@ -97,3 +97,4 @@ main_61_gen2_voxel_single_owner_guard.lua
 main_61a_gen2_2d_height_sync.lua
 main_62_ground_fx_retired.lua
 main_63_gen2_free_flight.lua
+main_60_network.lua

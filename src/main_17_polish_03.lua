@@ -209,6 +209,10 @@ local function buildWaterSprite(species)
   return nil
 end
 
+mod.exports.networkSprites.surf = function(species)
+  if WATER_ELIGIBLE[species] then return buildWaterSprite(species) end
+end
+
 local function preferredWaterMount(game, requested)
   local party = game and game.save and game.save.party or {}
   if requested and healthy(requested) and waterSpecies(game, requested)

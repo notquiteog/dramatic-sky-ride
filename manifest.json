@@ -1,7 +1,7 @@
 {
   "id": "DRAMATIC_SKY_RIDE",
   "name": "Dramatic Sky Ride",
-  "version": "0.2.24",
+  "version": "0.3.0",
   "api": 2,
   "entry": "main.lua",
   "profile": "content",
@@ -31,10 +31,11 @@
     "filesystem"
   ],
   "affects_link": false,
-  "description": "Controllable Flight, Ground Ride and Visible Surf mounts for Gen1Recomp, including optional animated Pokemon Stadium 2 mounts, Generation II support, Wild Skies integration, Battle Art/Dramaless compatibility and renderer-independent native 2D flight.",
+  "description": "Ground riding, visible Surf mounts and controllable flight for Gen 1, Crystal and FireRed/LeafGreen, with optional synchronized multiplayer mount visuals.",
   "github": "notquiteog/dramatic-sky-ride",
   "games": [
     "gen1",
-    "gen2"
+    "gen2",
+    "gen3"
   ]
 }

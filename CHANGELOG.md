@@ -1,3 +1,11 @@
+## 0.3.0 — 2026-09-22
+
+Adds native FireRed/LeafGreen ground riding, Surf mounts and free flight with native move/badge requirements, safe landing and in-game settings. Exposes optional read-only multiplayer mount/pose providers across all three generations.
+
+Known limits: Gen 3 free flight stays within the current map. Without Wilds, Gen 3 mount artwork falls back to native front sprites. Custom GB rider skins and all flight/Surf combinations have not been exhaustively checked online.
+
+Requires Gen1Recomp 0.3.1 for the verified Gen 3 path. Other mods are optional; no ROM, player save or import cache is included.
+
 ## 0.2.24 — 2026-09-22
 
 Restores the in-game OPTIONS integration, including simple and advanced ride settings, persistence and change events. Includes the new options adapter in the installable package and points updates to this fork.
