@@ -1,3 +1,7 @@
+**0.2.24: Restore independent in-game ride settings.** Restores the in-game OPTIONS integration, including simple and advanced ride settings, persistence and change events. Includes the new options adapter in the installable package and points updates to this fork.
+
+Supports Gen 1/2. A Gen 3 Ride port is not included.
+
 # Dramatic Sky Ride
 
 Dramatic Sky Ride adds controllable **Flight**, **Ground Ride** and **Visible Surf** mounts to Gen1Recomp. It works in native 2D, supports compatible voxel camera mods, Generation II mounts, Wild Skies interoperability, optional flying music, and animated **Pokemon Stadium 2** mounts generated locally from the player's own ROM through Crystal 251.

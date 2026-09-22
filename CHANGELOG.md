@@ -1,3 +1,9 @@
+## 0.2.24 — 2026-09-22
+
+Restores the in-game OPTIONS integration, including simple and advanced ride settings, persistence and change events. Includes the new options adapter in the installable package and points updates to this fork.
+
+Known limits: Supports Gen 1/2. A Gen 3 Ride port is not included.
+
 ## Unreleased — in-game settings
 
 Add missing in-game OPTIONS rows in Gen 1/2, preserving stored values and the existing settings filters. Tested on Gen1Recomp 0.3.0.
