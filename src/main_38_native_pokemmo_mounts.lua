@@ -190,7 +190,7 @@ local function newNativeRenderer(species, atlas)
     local row = rowForFacing(facing)
     local col = walkColumn(walkPhase)
     local quad = quadFor(row, col)
-    local visualScale = mountScale(species)
+    local visualScale = tonumber(self.def and self.def.dramaticSkyRideNetworkScale) or mountScale(species)
     local sx = (16 * visualScale) / atlas.tileW
     local sy = (16 * visualScale) / atlas.tileH
 
@@ -287,7 +287,7 @@ local function buildNativeVoxelCard(def, frame)
   local row = rowForEngineFrame(frame)
   local col = (tonumber(frame) or 0) >= 3 and walkColumn(1) or 0
   local species = def.dramaticSkyRideMountSpecies
-  local scale = mountScale(species)
+  local scale = tonumber(def.dramaticSkyRideNetworkScale) or mountScale(species)
   local key = table.concat({ tostring(def.image), tostring(frame), tostring(row),
     tostring(col), tostring(species), string.format("%.4f", scale) }, "#")
   if nativeVoxelMeshes[key] ~= nil then

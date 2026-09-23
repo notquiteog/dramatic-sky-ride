@@ -253,7 +253,7 @@ local function decorateNativeRenderer(renderer)
     if not quad then return end
 
     local species = self.def and self.def.dramaticSkyRideMountSpecies
-    local mountScale = correctedMountScale(species)
+    local mountScale = tonumber(self.def and self.def.dramaticSkyRideNetworkScale) or correctedMountScale(species)
     local scale = crop.fit * mountScale
     local drawnW = crop.width * scale
     local drawnH = crop.height * scale
@@ -310,7 +310,7 @@ local function buildCorrectedVoxelCard(def, frame)
   local row = rowForEngineFrame(frame)
   local col = (tonumber(frame) or 0) >= 3 and nativeWalkColumn(1) or 0
   local species = def.dramaticSkyRideMountSpecies
-  local mountScale = correctedMountScale(species)
+  local mountScale = tonumber(def.dramaticSkyRideNetworkScale) or correctedMountScale(species)
   local scale = crop.fit * mountScale
   local key = table.concat({ tostring(def.image), tostring(frame), tostring(row),
     tostring(col), tostring(species), string.format("%.4f", scale),

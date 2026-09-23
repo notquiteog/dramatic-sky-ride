@@ -376,6 +376,24 @@ local function installFlightGuards(world)
   rawset(world, "_dramaticSkyRideGen2Bridge", state)
 end
 
+-- Both grid flight and camera-relative flight consult this same gate.
+-- Use the raw setting because the legacy Kanto badge-table adapter deliberately
+-- disables its own story implementation on Gen2.
+local function flightCellAllowed(world, x, y)
+  if storyOccupied(world.entities, x, y, world.player) then return false end
+  local rawOption = generation.rawOptionValue or optionValue
+  if rawOption("story_gates", true) then
+    local scene = type(world.scene) == "function" and world:scene() or 0
+    for _, ev in ipairs((world.map.def and world.map.def.coordEvents) or {}) do
+      if ev.x == x and ev.y == y and (ev.sceneId or 0) == scene and ev.scriptKey then
+        return false
+      end
+    end
+  end
+  return true
+end
+mod.exports.gen2FlightCellAllowed = flightCellAllowed
+
 -- Gold's real Player invokes this shared hook. Open only tile/entity refusals
 -- while cruising in the air. Bounds stay refused so World:tryConnection owns
 -- route seams, and downstream mods still receive the promoted verdict.
@@ -385,6 +403,10 @@ mod.hooks:wrap("movement.collision", function(next, allowed, ctx)
   end
   local world = liveWorld()
   if not (world and world.player == ctx.mover) then return next(allowed, ctx) end
+  if not flightCellAllowed(world, ctx.toX, ctx.toY) then
+    ctx.reason = "story_gate"
+    return next(false, ctx)
+  end
   if allowed == false and ctx.reason ~= "bounds" then
     ctx.reason = "dramatic_flight"
     return next(true, ctx)

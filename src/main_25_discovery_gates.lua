@@ -44,7 +44,15 @@ local VANILLA_DISCOVERY_GATED = {
   INDIGO_PLATEAU = true,
   VIRIDIAN_FOREST = true,
 }
-for i = 1, 25 do VANILLA_DISCOVERY_GATED["ROUTE_" .. i] = true end
+for i = 1, 46 do VANILLA_DISCOVERY_GATED["ROUTE_" .. i] = true end
+-- Native Johto ids use the same discovery ledger as Kanto. Previously every
+-- Gold route was considered custom and this enabled setting had no effect.
+for _, id in ipairs({ "NEW_BARK_TOWN", "CHERRYGROVE_CITY", "VIOLET_CITY",
+  "AZALEA_TOWN", "GOLDENROD_CITY", "ECRUTEAK_CITY", "OLIVINE_CITY",
+  "CIANWOOD_CITY", "MAHOGANY_TOWN", "BLACKTHORN_CITY", "LAKE_OF_RAGE",
+  "SILVER_CAVE_OUTSIDE", "NATIONAL_PARK" }) do
+  VANILLA_DISCOVERY_GATED[id] = true
+end
 
 -- Optional runtime overrides for compatibility mods. true = gate this map;
 -- false = explicitly exempt it. No custom mod has to register anything: an

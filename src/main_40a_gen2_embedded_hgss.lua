@@ -154,6 +154,7 @@ local function decorate(renderer, species)
       value = okScale and tonumber(value) or nil
       if value and value > 0 then mountScale = value end
     end
+    mountScale = tonumber(self.def and self.def.dramaticSkyRideNetworkScale) or mountScale
     local scale = (tonumber(crop.fit) or 1) * mountScale
     local drawnW, drawnH = crop.width * scale, crop.height * scale
     local x = math.floor((px or 0) - (camX or 0))

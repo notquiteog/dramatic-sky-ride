@@ -125,7 +125,7 @@
     local rawDraw = sprite.draw
     sprite.draw = function(self, px, py, camX, camY, facing, walkPhase,
                            stepFlip, topHalf)
-      local scale = effectiveMountVisualScale(species)
+      local scale = tonumber(self.def and self.def.dramaticSkyRideNetworkScale) or effectiveMountVisualScale(species)
       if topHalf or math.abs(scale - 1) < 0.0001
          or not (love and love.graphics and love.graphics.draw) then
         return rawDraw(self, px, py, camX, camY, facing, walkPhase,
@@ -267,7 +267,7 @@
     local function scaledMesh(def, frame, fallback)
       local species = def and def.dramaticSkyRideMountSpecies
       if not species then return fallback(def, frame) end
-      local scale = effectiveMountVisualScale(species)
+      local scale = tonumber(def.dramaticSkyRideNetworkScale) or effectiveMountVisualScale(species)
       if math.abs(scale - 1) < 0.0001 then return fallback(def, frame) end
       local key = table.concat({ tostring(def.image), tostring(frame),
         tostring(species), string.format("%.4f", scale) }, "#")

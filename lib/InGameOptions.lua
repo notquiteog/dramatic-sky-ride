@@ -1,12 +1,12 @@
 -- Native options adapters. Each mod ships its own copy and supplies only its
 -- own public schema; no other mod or private manager implementation is needed.
 local M={}
-function M.install(mod,schema,title)
+function M.install(mod,schema,title,visible)
  local active=true
  local function rows(game)
   local out={}
   for _,s in ipairs(schema)do
-   if s.type=='toggle' or s.type=='choice' or s.type=='number' then
+   if (not visible or visible(s))and(s.type=='toggle' or s.type=='choice' or s.type=='number')then
     local choices=s.choices or {{'OFF',false},{'ON',true}}
     local function index()
      local value=mod.options:get(s.key)
@@ -61,7 +61,20 @@ function M.install(mod,schema,title)
    local out=group(kept,openPage)
    if #members>0 then out[#out+1]={id=mod.id..':settings',label=title or mod.id,group=true,
     value=function()return #members..' OPTIONS'end,
-    activate=function()openPage(title or mod.id,members)end}end
+    activate=function()
+     local page={}
+     local function refresh()
+      local fresh=rows(nil)
+      for _,r in ipairs(fresh)do local step=r.step;r.step=function(c,dir)
+       local changed=step(c.game,dir)
+       if changed then refresh()end
+       return changed
+      end end
+      for i=#page,1,-1 do page[i]=nil end
+      for i,r in ipairs(fresh)do page[i]=r end
+     end
+     refresh();openPage(title or mod.id,page)
+    end}end
    return out
   end
  else

@@ -156,7 +156,10 @@ end
 local function axisMoveAllowed(world, x, z)
   local map = world and world.map
   if not (map and map.inBounds) then return false end
-  return map:inBounds(math.floor(x / 16), math.floor(z / 16))
+  local cx, cy = math.floor(x / 16), math.floor(z / 16)
+  if not map:inBounds(cx, cy) then return false end
+  local allowed = mod.exports.gen2FlightCellAllowed
+  return not allowed or allowed(world, cx, cy)
 end
 
 local function applyContinuousFlight(world, dt)
