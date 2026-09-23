@@ -1,10 +1,12 @@
-> Test build 0.4.0-test.3: fixes shared aerial encounter ownership and replaces private music-pack scans with public Surf/Bike records. Published test.2 passed native Ride synchronization; test.3 archive acceptance is pending.
+> Test build 0.4.0-test.3: fixes shared aerial encounter ownership and uses public Surf/Bike records on Gen1/2. Published archives passed Crystal music playback/restoration, LeafGreen Ride synchronization with six mods, and FireRed shared aerial encounters.
 
 **0.3.0: FireRed and LeafGreen riding with multiplayer poses.** Adds native FireRed/LeafGreen ground riding, Surf mounts and free flight with native move/badge requirements, safe landing and in-game settings. Exposes optional read-only multiplayer mount/pose providers across all three generations.
 
 Development tree: native Gen 3 now implements shared ride settings and outdoor flight connections with progression guards. Embedded HGSS mount art works without Wilds. See [the option support inventory](docs/GENERATION_OPTION_SUPPORT.md) for implementation coverage, the remaining native Stadium-renderer gap, and pending gameplay verification.
 
 Requires Gen1Recomp 0.3.1 for the verified Gen 3 path. Other mods are optional; no ROM, player save or import cache is included.
+
+Official engine 0.3.1 disables the `content.music` registry for native Gen3. External registered music tracks therefore remain unavailable in FireRed/LeafGreen; Ride's user-supplied `audio/flying/tracks.lua` catalog remains supported. The Crystal public-music QA pass does not establish native external-music support.
 
 **0.2.24: Restore independent in-game ride settings.** Restores the in-game OPTIONS integration, including simple and advanced ride settings, persistence and change events. Includes the new options adapter in the installable package and points updates to this fork.
 
