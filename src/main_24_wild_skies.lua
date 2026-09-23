@@ -324,7 +324,7 @@ local function startWildSkiesBattle(ow, hit)
   log("intercepted Wild Skies %s Lv.%s%s",
     tostring(hit.species), tostring(level), hit.scenery and " [scenery]" or "")
   pcall(function()
-    mod.events:emit("mod.dramatic_sky_ride.flyer_intercepted", {
+    mod.events:emit("mod." .. mod.id .. ".flyer_intercepted", {
       species = hit.species,
       level = level,
       altitude = tonumber(hit.altitude) or flight.altitude,

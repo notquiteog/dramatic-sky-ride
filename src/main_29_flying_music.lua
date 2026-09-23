@@ -1,19 +1,12 @@
 -- Optional Flying Music override.
 --
--- DSR can discover active DarioMelo music packs and reuse their Surf / Bike
--- OGG assets directly from the installed mod folder. No third-party audio is
--- copied into Dramatic Sky Ride.
+-- DSR reuses the public merged Surf / Bike music records. No private mod
+-- directories are inspected and no third-party audio is copied into Ride.
 (function()
   local Music = require("src.core.Music")
   local FLYING_MUSIC_NONE = "none"
   local FLYING_MUSIC_OPTION = "flying_music"
   local FLYING_MUSIC_PREFIX = "Music_DSR_Flying_"
-
-  local DARIO_PACKS = {
-    { id = "Music_FRLG", short = "FRLG", name = "FireRed / LeafGreen" },
-    { id = "Music_HGSS", short = "HGSS", name = "HeartGold / SoulSilver" },
-    { id = "Music_LGPE", short = "LGPE", name = "Let's Go Pikachu / Let's Go Eevee" },
-  }
 
   local function loadFlyingMusicCatalog()
     local source = mod:read("audio/flying/tracks.lua")
@@ -61,34 +54,6 @@
     if not (fs and fs.getInfo) then return true end
     local ok, info = pcall(fs.getInfo, path)
     return ok and info ~= nil
-  end
-
-  local function activeMod(id)
-    if not mod.find then return false end
-    local ok, handle = pcall(mod.find, mod, id)
-    return ok and handle ~= nil
-  end
-
-  -- mod.find exposes the active mod handle but not its filesystem root. Scan
-  -- the same mods directory as the loader and match by manifest id, so renamed
-  -- install folders still work. `manifestId` is the tiny parser from main_01;
-  -- this intentionally avoids importing src.link.Json, which is network-gated.
-  local function installedModRoot(id)
-    if not activeMod(id) then return nil end
-    local fs = love and love.filesystem
-    if not (fs and fs.getDirectoryItems and fs.read) then return nil end
-
-    local okList, names = pcall(fs.getDirectoryItems, "mods")
-    if not okList or type(names) ~= "table" then return nil end
-
-    for _, name in ipairs(names) do
-      local root = "mods/" .. tostring(name)
-      local okRead, raw = pcall(fs.read, root .. "/manifest.json")
-      if okRead and type(raw) == "string" and manifestId(raw) == id then
-        return root
-      end
-    end
-    return nil
   end
 
   local tracksByKey = {}
@@ -142,32 +107,19 @@
     registerTrack(track, ownAssetPath, "Dramatic Sky Ride")
   end
 
-  -- Reuse installed DarioMelo packs in place. Their Surf/Bike intro+loop files
-  -- remain owned by those mods; DSR only registers temporary flight song ids.
+  -- Definitions are already registered by their owner. Preserve those song
+  -- identities and paths, including load-order selection between music packs.
+  local public = assert((loadstring or load)(assert(mod:read("lib/RegisteredFlightMusic.lua")),
+    "@ride/registered-music"))()(mod)
   local externalCount = 0
-  for _, pack in ipairs(DARIO_PACKS) do
-    local root = installedModRoot(pack.id)
-    if root then
-      local function packPath(relative)
-        return root .. "/" .. tostring(relative or "")
-      end
-      local prefix = tostring(pack.short):lower()
-      if registerTrack({
-        key = prefix .. "_surf",
-        label = pack.short .. " - Surf",
-        intro = "assets/Music_Surfing_intro.ogg",
-        loop = "assets/Music_Surfing_loop.ogg",
-      }, packPath, "DarioMelo/Gen1Recomp-MusicMods") then
-        externalCount = externalCount + 1
-      end
-      if registerTrack({
-        key = prefix .. "_bike",
-        label = pack.short .. " - Bike",
-        intro = "assets/Music_BikeRiding_intro.ogg",
-        loop = "assets/Music_BikeRiding_loop.ogg",
-      }, packPath, "DarioMelo/Gen1Recomp-MusicMods") then
-        externalCount = externalCount + 1
-      end
+  for _, row in ipairs(public) do
+    if not tracksByKey[row.key] then
+      tracksByKey[row.key] = {
+        key = row.key, label = row.label, intro = row.intro, loop = row.loop,
+        songId = row.songId, provider = "Registered music",
+      }
+      optionChoices[#optionChoices + 1] = { row.label, row.key }
+      externalCount = externalCount + 1
     end
   end
 
@@ -177,7 +129,7 @@
     label = "FLYING MUSIC",
     default = FLYING_MUSIC_NONE,
     choices = optionChoices,
-    help = "Choose a flight theme. Installed DarioMelo packs add Surf/Bike tracks.",
+    help = "Choose a flight theme. Public registered Surf/Bike tracks are optional.",
   }
   if mod.options and mod.options.define then mod.options:define(OPTION_SCHEMA) end
 
@@ -266,6 +218,6 @@
     activeSong = function() return activeFlyingSong end,
   }
 
-  log("Flying Music compatibility loaded with %d track(s), %d from DarioMelo packs",
+  log("Flying Music compatibility loaded with %d track(s), %d from public music records",
     #optionChoices - 1, externalCount)
 end)()

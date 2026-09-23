@@ -25,7 +25,7 @@ the shared schema and runtime.
 | `mount_menu`, `mount_hints` | Shared menu/hints | START entry and first-use reminders |
 | `show_followers_while_mounted` | Ground only; default off | `shouldShowFollowers()` policy for optional providers |
 | `pokedex_mount_sizes`, `mount_size_*` | Shared scales | Native height plus override; canvas expands to avoid clipping |
-| `flying_music` | User catalog/optional packs | Same catalog/pack keys; restores native map music |
+| `flying_music` | User catalog and public merged Surf/Bike records | Same `installed_surf` / `installed_bike` keys; native intro/loop playback and map-music restoration |
 | `air_encounters` | Optional Wild Skies | Public Wild Skies physical interception/claim API plus `allowAirEncounters()` policy; requires airborne provider |
 | `settings_view`, `size_overrides` | Shared presentation | Native page filters/refreshes in place; retains hidden values |
 | `flight_mount_renderer` | Optional imported Stadium | **Unavailable:** native Gen3 Stadium model/rig renderer unported |
@@ -40,6 +40,14 @@ Ride has no required companion dependencies. Voxel cameras, followers, airborne
 encounters, external music and online transport remain optional. Integration
 policies do not claim that an absent provider supplies a feature.
 
+Music uses the active file-backed `content.music` Surf/Bike definitions, with
+Gen2 song-name aliases. It does not inspect private pack directories or offer
+every hidden track in simultaneously installed packs. Old `frlg_*`, `hgss_*`
+and `lgpe_*` selections require choosing a public registered track again;
+Ride does not silently map them to a different provider. Custom local catalog
+keys and the default `none` are unchanged. An absent public music provider
+adds no installed-track choices.
+
 Online owns transport. Ride exports appearance and pose without changing
 remote parties or local settings. GB poses carry visibility and bounded scale;
 returned definitions have `dramaticSkyRideNetworkScale`, respected by flat and
@@ -52,9 +60,15 @@ remote appearance.
 - `luajit tests/gen3_options_unit.lua`: isolated progression, movement,
   altitude, appearance, settings-page, battle and safe-save contracts.
 - `luajit tests/gen3_skies_unit.lua`: optional-provider absence, altitude,
-  shared pending claims, scoped flockmates and failed-start restoration.
+  shared pending claims, scoped flockmates, failed-start restoration and the
+  engine's exact event-prefix rule.
+- `luajit tests/flying_music_unit.lua`: public registry discovery, aliases,
+  intro/loop playback, pause/quit restoration and invalid-asset handling.
 - LuaJIT bytecode compilation of native modules and assembled GB source.
 
-Deterministic stubs do not verify GPU output, physical controllers, imported
-songs, real connection maps or multiplayer packets. Those remain acceptance
-work after implementation.
+Published 0.4.0-test.2 passed two-endpoint FireRed mount/flight/landing and
+disconnect-cleanup checks on engine 0.3.1. Its shared aerial battle failure
+was traced to an event-prefix exception after battle entry; test.3 corrects
+that exception. The new patch needs archive acceptance testing. Physical
+controllers, imported music, real connection maps and native Stadium rendering
+remain outside the completed checks.

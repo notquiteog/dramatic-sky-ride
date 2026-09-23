@@ -1,4 +1,4 @@
-> Test build 0.4.0-test.2: shared Gen1 settings implemented in native Gen3, progression-safe Gen2 flight, synchronized appearance, and optional native Wild Skies interception. Gameplay verification pending.
+> Test build 0.4.0-test.3: fixes shared aerial encounter ownership and replaces private music-pack scans with public Surf/Bike records. Published test.2 passed native Ride synchronization; test.3 archive acceptance is pending.
 
 **0.3.0: FireRed and LeafGreen riding with multiplayer poses.** Adds native FireRed/LeafGreen ground riding, Surf mounts and free flight with native move/badge requirements, safe landing and in-game settings. Exposes optional read-only multiplayer mount/pose providers across all three generations.
 

@@ -5,8 +5,9 @@ return function(mod,S,settings)
  local tracks,choices={},{{'NONE','none'}}
  local function add(row,read)
   if type(row)~='table'or not row.key or not(row.file or row.intro)then return end
-  local intro=read(row.file or row.intro);local loop=row.loop and read(row.loop)
-  if not intro or(row.loop and not loop)then return end
+  local loopFile=row.loop or row.loopFile or row.loop_file
+  local intro=read(row.file or row.intro);local loop=loopFile and read(loopFile)
+  if not intro or(loopFile and not loop)then return end
   tracks[row.key]={intro=intro,loop=loop,label=row.label or row.key}
   choices[#choices+1]={row.label or row.key,row.key}
  end
@@ -17,16 +18,11 @@ return function(mod,S,settings)
   if ok and type(rows)=='table'then for _,row in ipairs(rows)do add(row,function(p)return mod:read(p)end)end end
  end
  local fs=love.filesystem
- if fs.getDirectoryItems and fs.read then
-  for _,folder in ipairs(fs.getDirectoryItems('mods')or{})do
-   local root='mods/'..folder;local raw=fs.read(root..'/manifest.json')
-   local id=raw and raw:match('"id"%s*:%s*"([^"]+)"')
-   if(id=='Music_FRLG'or id=='Music_HGSS'or id=='Music_LGPE')and mod.find and mod.find(id)then
-    local tag=id:sub(7)
-    for _,kind in ipairs({{'surf','Surfing'},{'bike','BikeRiding'}})do
-     add({key=tag:lower()..'_'..kind[1],label=tag..' - '..kind[1]:upper(),intro='assets/Music_'..kind[2]..'_intro.ogg',loop='assets/Music_'..kind[2]..'_loop.ogg'},function(p)return fs.read(root..'/'..p)end)
-    end
-   end
+ local public=assert((loadstring or load)(assert(mod:read('lib/RegisteredFlightMusic.lua')),'@ride/registered-music'))()(mod)
+ for _,row in ipairs(public)do
+  if not tracks[row.key]then
+   tracks[row.key]={intro=row.intro,loop=row.loop,label=row.label,publicPath=true}
+   choices[#choices+1]={row.label,row.key}
   end
  end
  settings.add('flying_music','FLYING MUSIC','choice','none',{choices=choices})
@@ -36,8 +32,10 @@ return function(mod,S,settings)
   if source then source:stop();source:release();source=nil end
   if playing then playing=nil;Audio.restoreMapSong()end
  end
- local function start(bytes,loop)
-  source=love.audio.newSource(fs.newFileData(bytes,'flight.ogg'),'static');source:setLooping(loop);source:play()
+ local function start(bytes,loop,publicPath)
+  local ok,value=pcall(love.audio.newSource,publicPath and bytes or fs.newFileData(bytes,'flight.ogg'),publicPath and'stream'or'static')
+  if not ok then return false end
+  source=value;source:setLooping(loop);source:play();return true
  end
  mod.hooks:wrap('input.step',function(nextFn,g,dt)
   local result=nextFn(g,dt)
@@ -45,9 +43,11 @@ return function(mod,S,settings)
   local track=tracks[key]
   if not track then stop()
   elseif playing~=key then
-   stop();Audio.playSong(0);playing=key;loopPhase=not track.loop;start(track.intro,loopPhase)
+   stop();loopPhase=not track.loop
+   if start(track.intro,loopPhase,track.publicPath)then Audio.playSong(0);playing=key else tracks[key]=nil end
   elseif source and not source:isPlaying()and not loopPhase and track.loop then
-   source:release();loopPhase=true;start(track.loop,true)
+   source:release();source=nil;loopPhase=true
+   if not start(track.loop,true,track.publicPath)then tracks[key]=nil;stop()end
   end
   return result
  end)

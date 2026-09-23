@@ -33,7 +33,7 @@ return function(mod,S,settings,P,Map,blocked,tell)
   local started,why=result[2],result[3]
   if started then
    M.cooldown=2;M.rest=25;M.intercepts=M.intercepts+1
-   mod.events:emit('mod.dramatic_sky_ride.flyer_intercepted',{species=hit.species,level=encounter.level,altitude=hit.altitude or S.height,mount=S.species})
+   mod.events:emit('mod.'..mod.id..'.flyer_intercepted',{species=hit.species,level=encounter.level,altitude=hit.altitude or S.height,mount=S.species})
    return true
   end
   M.lastIntercept=nil;M.cooldown=2
