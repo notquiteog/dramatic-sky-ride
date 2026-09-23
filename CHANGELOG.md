@@ -1,3 +1,9 @@
+## 0.4.0-test.1 — 2026-09-22
+
+HGSS overworld mount art in Gen 3 with or without Wilds installed; shared provider still controls optional multiplayer mount rendering.
+
+**TEST PRERELEASE — published before gameplay testing at the user’s request.** Build/compile validation only at publication. Gen 1 online doubles and the new door/healing projection require native gameplay verification; advanced move effects and disconnect combinations may need corrections. Existing stable releases remain unchanged.
+
 ## 0.3.0 — 2026-09-22
 
 Adds native FireRed/LeafGreen ground riding, Surf mounts and free flight with native move/badge requirements, safe landing and in-game settings. Exposes optional read-only multiplayer mount/pose providers across all three generations.

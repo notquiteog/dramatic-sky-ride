@@ -1,3 +1,5 @@
+> Test build 0.4.0-test.1: HGSS overworld mount art in Gen 3 with or without Wilds installed; shared provider still controls optional multiplayer mount rendering. Gameplay verification pending.
+
 **0.3.0: FireRed and LeafGreen riding with multiplayer poses.** Adds native FireRed/LeafGreen ground riding, Surf mounts and free flight with native move/badge requirements, safe landing and in-game settings. Exposes optional read-only multiplayer mount/pose providers across all three generations.
 
 Known limits: Gen 3 free flight stays within the current map. Without Wilds, Gen 3 mount artwork falls back to native front sprites. Custom GB rider skins and all flight/Surf combinations have not been exhaustively checked online.

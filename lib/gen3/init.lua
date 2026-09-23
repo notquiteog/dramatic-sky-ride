@@ -36,6 +36,16 @@ return function(mod)
   if not rider or not(mount or pic)then return end
   local canvas=love.graphics.newCanvas(48,64*9);canvas:setFilter('nearest','nearest')
   love.graphics.push('all');love.graphics.origin();love.graphics.setShader();love.graphics.setScissor();love.graphics.setDepthMode();love.graphics.setBlendMode('alpha');love.graphics.setCanvas(canvas);love.graphics.clear(0,0,0,0);love.graphics.setColor(1,1,1,1)
+  local ownedMount
+  if not mount then
+   local dex=require('src.core.game3.pokemon').national(species)
+   local bytes=mod:read(('assets/hgss/%d-normal-9.png'):format(dex))
+   if bytes then
+    local img=love.graphics.newImage(love.filesystem.newFileData(bytes,'mount.png'));img:setFilter('nearest','nearest')
+    local q={};for i=0,8 do q[i]=love.graphics.newQuad(0,i*32,32,32,32,288)end
+    mount={image=img,quads=q,width=32,height=32};ownedMount=img
+   end
+  end
   local quads={}
   for frame=0,8 do
    local y=frame*64
@@ -48,6 +58,7 @@ return function(mod)
    quads[frame]=love.graphics.newQuad(0,y,48,64,48,64*9)
   end
   love.graphics.pop()
+  if ownedMount then ownedMount:release()end
   S.cache[id]={image=canvas,quads=quads,width=48,height=64,frameCount=9,inanimate=false}
   return id
  end
