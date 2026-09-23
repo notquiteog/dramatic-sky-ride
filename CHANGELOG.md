@@ -1,3 +1,9 @@
+## 0.4.0 — 2026-09-22
+
+Includes synchronized Gen3 riding, shared aerial encounter completion and public music consumers. Gen3 external music registration is blocked by the current engine schema; the local Ride catalog remains available.
+
+Numbered release of the tested 0.4.0-test.3 build. Runtime and assets are unchanged except version metadata; packaging and cart pins are refreshed. Validation from the prior exact releases remains applicable: official Gen1Recomp 0.3.1, isolated profiles, targeted native rendering/integration checks. This release does not claim complete cross-generation feature or visual parity.
+
 ## 0.4.0-test.3 — 2026-09-22
 
 Test patch for engine 0.3.1.
