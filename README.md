@@ -1,3 +1,7 @@
+## 0.4.1 — 2026-09-26
+
+An explicitly bound Wilds catch/cycle key takes precedence over Ride's default G shortcut in all three generations. Uses an optional public Wilds export; standalone Ride keeps its normal controls. Verified with actual Yellow/Crystal/LeafGreen rebound throw fixtures plus native Ride setting/network and Skies contract suites.
+
 ## 0.4.0 — 2026-09-22
 
 Includes synchronized Gen3 riding, shared aerial encounter completion and public music consumers. Gen3 external music registration is blocked by the current engine schema; the local Ride catalog remains available.

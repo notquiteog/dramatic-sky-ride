@@ -280,6 +280,8 @@ return function(mod)
    if ev.phase=='pressed'then
     if ev.key=='f7'then if S.menu then S.menu=false;quiet()else S.show()end;return end
     if S.menu then menuKey(ev.key);return end
+    local wilds=g.mods and g.mods.exports and g.mods.exports.overworld_wild_spawns
+    if wilds and wilds.ownsOverworldCatchKey and wilds.ownsOverworldCatchKey(g,ev.key)then return nextFn(g,ev)end
     if opt('mount_shortcut')and(ev.key=='h'or ev.key=='g')then S.shortcut(ev.key=='h'and'fly'or'ground');return end
    end
   end

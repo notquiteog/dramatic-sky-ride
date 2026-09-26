@@ -275,6 +275,12 @@ end, 85)
 -- continue into the existing flight shortcut; G/Y is exclusively terrestrial.
 local groundKeypressed = Game.keypressed
 function Game:keypressed(key, ...)
+  -- A user-bound catch key takes precedence over our default G shortcut.
+  -- Optional public contract; Ride stays standalone when Wilds is absent.
+  local wilds=self.mods and self.mods.exports and self.mods.exports.overworld_wild_spawns
+  if wilds and type(wilds.ownsOverworldCatchKey)=="function" and wilds.ownsOverworldCatchKey(self,key) then
+    return groundKeypressed(self,key,...)
+  end
   local provider = mod.exports and mod.exports._dramaticProviderState or nil
   local groundKey = provider and provider.id == "DRAMALESS_SHAPE" and "j" or "g"
   if key == groundKey and useGroundShortcut(self) then return end
