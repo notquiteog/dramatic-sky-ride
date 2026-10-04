@@ -9,8 +9,10 @@ return function(mod,S,settings,Pokemon,Sprites,party)
  local function size(species)
   local scale=1
   if settings.get('pokedex_mount_sizes')then
-   local entry=require('src.core.game3.pokedex_data').getEntry(species)
-   local meters=entry and (tonumber(entry.heightDm)or 0)/10 or 0
+   -- Use numeric imported measurements, not the UI's localized dex text.
+   -- Emerald's dex strings differ from FRLG (including the pounds label).
+   local entry=Pokemon.dexEntry and Pokemon.dexEntry(species)
+   local meters=entry and (tonumber(entry.height or entry.heightDm)or 0)/10 or 0
    if meters>0 then scale=clamp(meters/1.7,.5,4)end
   end
   local key=Pokemon.keyName(species)or tostring(species)

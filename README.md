@@ -1,3 +1,9 @@
+## 0.5.0 — 2026-10-04
+
+Added Emerald discovery gates and native numeric mount sizing. Reverse ledge jumps now authenticate through Gen3 collision rather than a foreign engine module. Optional follower art and multiplayer ride synchronization remain independent integrations.
+
+Tested against official Gen1Recomp 0.3.51. Existing games retain their native data and defaults. See Battle Art’s Emerald QA record for the exact integration coverage and remaining gaps.
+
 ## 0.4.1 — 2026-09-26
 
 An explicitly bound Wilds catch/cycle key takes precedence over Ride's default G shortcut in all three generations. Uses an optional public Wilds export; standalone Ride keeps its normal controls. Verified with actual Yellow/Crystal/LeafGreen rebound throw fixtures plus native Ride setting/network and Skies contract suites.

@@ -18,11 +18,11 @@ P.syncSavePosition=function(g)g.session.map='FR_PALLET_TOWN';g.session.x=P.cellX
 P.startSurfing=function()P.surfing=true end
 local mapDef={mapType=1,width=20,height=20,midLayout={width=20,height=20},coordEvents={},connections={}}
 local Map=module('src.core.game3.map',{current='FR_PALLET_TOWN',currentDef=function()return mapDef end,ensureMidLayout=noop})
-local collision=module('src.core.game3.collision',{isWalkable=function(x,y)return x~=15 and y~=15 end,isWater=function(x,y)return x==15 or y==15 end,warpAt=function()return nil end,ledgeLanding=function()end,canEnter=function()return true end,cell=function()return 7 end,connectionLanding=function()return 1,1 end,tryConnection=function()return false end})
+local collision=module('src.core.game3.collision',{isWalkable=function(x,y)return x~=15 and y~=15 end,isWater=function(x,y)return x==15 or y==15 end,warpAt=function()return nil end,ledgeLanding=function(_,x,y,dir)if x==5 and y==3 and dir=='down' then return 5,5 end end,canEnter=function()return true end,cell=function()return 7 end,connectionLanding=function()return 1,1 end,tryConnection=function()return false end})
 local rider=image(16,32)
 local Sprites=module('src.core.game3.ow_sprites',{playerGraphicsId=function()return 0 end,getDraw=function(id)if id==0 or id==7 then return {image=rider,width=16,height=32,quads={[0]={}}}end end})
-local Pokemon=module('src.core.game3.pokemon',{name=function()return'CHARIZARD'end,keyName=function(id)return id==6 and'CHARIZARD'or nil end,national=function(id)return id end,frontPic=function()return nil end})
-module('src.core.game3.pokedex_data',{getEntry=function()return{heightDm=17}end})
+local Pokemon=module('src.core.game3.pokemon',{dexEntry=function()return{height=17}end,name=function()return'CHARIZARD'end,keyName=function(id)return id==6 and'CHARIZARD'or nil end,national=function(id)return id end,frontPic=function()return nil end})
+module('src.core.game3.pokedex_data',{getEntry=function()error('UI-localized dex must not size mounts')end})
 local hasBadge=false
 module('src.core.game3.field_moves',{isOutdoors=function()return true end,partyMoveUser=function(p,move)for _,m in ipairs(p[1].moves)do if m==move then return p[1]end end end,hasBadge=function()return hasBadge end})
 module('src.mods.Gen3Compat',{worldBusy=function()return false end})
@@ -36,7 +36,7 @@ module('src.core.game3.se_ids',{SE_M_FLY=151})
 module('src.core.game3.warp',{isBusy=function()return false end})
 module('src.core.game3.field_view',{draw=noop})
 module('src.core.game3.field_effects',{drawBehind=noop})
-module('src.world.gen2.Permissions',{ledgeFacings=function()return{down=true}end})
+-- A Gen3 mount must use Gen3 collision; the sandbox rejects foreign engines.
 module('src.core.GameVersion',{generation=function()return 3 end})
 local Rows=module('src.ui.game3.option_rows',{build=function()return{}end,group=function(rows)return rows end})
 module('src.mods.Runtime',{emit=function(name,ev)if name=='mod.options_changed'then values[ev.key]=ev.value end;for _,fn in ipairs(events[name]or{})do fn(ev)end end})
@@ -89,7 +89,7 @@ values.ground_gallop=false;local stamina=S.stamina;tick(10);check(S.stamina>stam
 local base=P.stepFrames;values.ground_speed=200;tick(10);check(P.stepFrames<base,'ground percentage functional')
 check(not mod.exports.shouldShowFollowers(),'ground followers default hidden')
 values.show_followers_while_mounted=true;check(mod.exports.shouldShowFollowers(),'ground followers opt-in')
-local tx=collision.ledgeLanding(game,5,5,'up');check(tx==5,'reverse ledge enabled')
+local tx=collision.ledgeLanding(game,5,5,'up');check(tx==5,'reverse ledge enabled');check(collision.ledgeLanding(game,6,5,'up')==nil,'ordinary obstacles are not ledges')
 values.reverse_ledge_jumps=false;check(collision.ledgeLanding(game,5,5,'up')==nil,'reverse ledge disabled')
 S.menu=true;game.phase='battle';hooks['input.step'](game,1/60);check(S.suspended and not S.menu,'battle suspension also closes owned mount menu')
 game.phase='field';hooks['input.step'](game,1/60);check(not S.suspended and S.active,'battle remount')

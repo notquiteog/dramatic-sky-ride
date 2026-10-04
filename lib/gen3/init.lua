@@ -73,7 +73,7 @@ return function(mod)
  end
  local function discoveryGated(id,def)
   if overrides[id]~=nil then return overrides[id]end
-  return type(id)=='string'and id:match('^FR_')~=nil and def and Moves.isOutdoors(def.mapType)
+  return type(id)=='string' and def and Moves.isOutdoors(def.mapType)
  end
  local function quiet()
   local g=game();local i=g and g.input;if i then i.state={};i.pressed={};i.pressQueue={}end
@@ -224,9 +224,10 @@ return function(mod)
   local tx,ty=nativeLedge(g,x,y,dir);if tx then return tx,ty end
   if not(S.active and S.mode=='ground'and opt('reverse_ledge_jumps'))then return end
   local d=delta[dir];if not d then return end
-  local permissions=require('src.world.gen2.Permissions')
-  local faces=permissions.ledgeFacings(Collision.cell(x+d[1],y+d[2]))
-  if faces and faces[opposite[dir]]and Collision.canEnter(g,x+d[1]*2,y+d[2]*2,{})then return x+d[1]*2,y+d[2]*2 end
+  local lx,ly=x+d[1]*2,y+d[2]*2
+  -- Authenticate the same ledge using the native Gen3 approach from above.
+  local rx,ry=nativeLedge(g,lx,ly,opposite[dir])
+  if rx==x and ry==y and Collision.canEnter(g,lx,ly,{})then return lx,ly end
  end
  local sync=P.syncSavePosition
  P.syncSavePosition=function(g)
