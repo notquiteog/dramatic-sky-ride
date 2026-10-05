@@ -1,3 +1,7 @@
+## 0.5.1 — 2026-10-04
+
+Packaging refresh for the coordinated Battle Art 1.31.0 cart release. Runtime behavior is unchanged from 0.5.0. Companions remain optional; no new gameplay or multiplayer verification is claimed. Requires Gen1Recomp 0.3.51 or newer for the bundled carts.
+
 ## 0.5.0 — 2026-10-04
 
 Added Emerald discovery gates and native numeric mount sizing. Reverse ledge jumps now authenticate through Gen3 collision rather than a foreign engine module. Optional follower art and multiplayer ride synchronization remain independent integrations.
