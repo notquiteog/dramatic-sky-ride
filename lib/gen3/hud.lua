@@ -24,27 +24,42 @@ return function(mod,S,settings,choices,camera)
   end
   love.graphics.pop()
  end
- local font
+ -- Use the engine's regional chrome and imported glyphs. These functions
+ -- are also the normal skinning boundary for an optional UI presentation mod.
+ local Window,Font
  mod.hooks:wrap('render.hud',function(nextFn,g,v)
   nextFn(g,v)
   local altitude=S.active and S.mode=='fly'and not S.suspended and opt('altitude_display')~='off'
    and(opt('altitude_display')=='always'or(S.altitudeTimer or 0)>0)
   local stamina=S.active and S.mode=='ground'and not S.suspended and opt('ground_hud')and(S.galloping or S.stamina<.999)
   if not S.menu and not altitude and not stamina and(S.noticeTimer or 0)<=0 then return end
-  font=font or love.graphics.newFont(16)
-  love.graphics.push('all');love.graphics.setFont(font)
-  if not S.menu then
-   local x,y=12,v.height-38
-   local text=altitude and('ALT '..math.floor(S.height)..' / 96')or stamina and('GALLOP '..math.floor(S.stamina*100)..'%')or S.notice
-   love.graphics.setColor(.07,.09,.13,.92);love.graphics.rectangle('fill',x,y,math.min(v.width-24,font:getWidth(text)+20),27,4)
-   love.graphics.setColor(1,1,1,1);love.graphics.print(text,x+10,y+4);love.graphics.pop();return
-  end
-  local rows=choices();local w=math.min(v.width-24,440);local h=math.min(v.height-24,110+#rows*25);local x,y=(v.width-w)/2,(v.height-h)/2
-  love.graphics.setColor(.07,.09,.13,.97);love.graphics.rectangle('fill',x,y,w,h,8)
-  love.graphics.setColor(1,1,1,1);love.graphics.print('DRAMATIC RIDE',x+16,y+12)
-  local count=math.max(1,math.floor((h-100)/25));local first=math.max(1,S.cursor-count+1)
-  for i=first,math.min(#rows,first+count-1)do love.graphics.print((i==S.cursor and '> 'or '  ')..rows[i].label,x+16,y+42+(i-first)*25)end
-  love.graphics.printf(S.notice~=''and S.notice or(#rows==0 and'No healthy Pokemon.'or'Enter / A: mount   Esc / B: close'),x+16,y+h-40,w-32)
-  love.graphics.pop()
+  Window=Window or require('src.ui.game3.window');Font=Font or require('src.ui.game3.font')
+  local gfx=love.graphics;gfx.push('all')
+  local ok,err=pcall(function()
+   gfx.origin();gfx.setShader()
+   local scale=math.max(1,math.floor(math.min(v.width/240,v.height/160)))
+   gfx.translate(math.floor((v.width-240*scale)/2),math.floor((v.height-160*scale)/2));gfx.scale(scale)
+   gfx.setColor(1,1,1,1)
+   local function panel(x,y,w,h)local t=Window.template(x,y,w,h);Window.fill(t);Window.stdFrame(t)end
+   local function text(value,x,y,w)
+    Font.draw(tostring(value or ''),x,y,{maxWidth=w or 208,colors=Font.COLOR.NORMAL})
+   end
+   if not S.menu then
+    panel(2,15,26,4)
+    text(altitude and('ALT '..math.floor(S.height)..' / 96')or stamina and('GALLOP '..math.floor(S.stamina*100)..'%')or S.notice,20,124,200)
+    return
+   end
+   local rows=choices();local count=math.min(4,math.max(1,#rows));local first=math.max(1,S.cursor-count+1)
+   local height=8+count*2;local top=math.floor((20-height)/2)
+   panel(2,top,26,height);text('DRAMATIC RIDE',24,top*8+2,192)
+   if #rows==0 then text('No healthy Pokemon.',32,top*8+26,176)end
+   for i=first,math.min(#rows,first+count-1)do
+    local y=top*8+26+(i-first)*16
+    if i==S.cursor then Window.cursorPx(24,y)end
+    text(rows[i].label,36,y,180)
+   end
+   text(S.notice~=''and S.notice or'A: mount   B: close',24,(top+height)*8-20,192)
+  end)
+  gfx.pop();if not ok then error(err,0)end
  end)
 end

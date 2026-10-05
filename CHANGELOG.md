@@ -1,3 +1,7 @@
+## Unreleased
+
+Use native Gen3 window frames and imported regional fonts for the mount menu, altitude, stamina and notices. Compact scrolling menus preserve existing input and companion independence. Emerald/LeafGreen rendered ON/OFF checks on engine 0.3.52; focused settings/sky/UI tests pass.
+
 ## 0.5.1 — 2026-10-04
 
 Packaging refresh for the coordinated Battle Art 1.31.0 cart release. Runtime behavior is unchanged from 0.5.0. Companions remain optional; no new gameplay or multiplayer verification is claimed. Requires Gen1Recomp 0.3.51 or newer for the bundled carts.
