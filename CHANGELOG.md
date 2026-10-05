@@ -1,3 +1,7 @@
+## 0.5.2 — 2026-10-05
+
+Use native Gen3 window and font styling for riding menus, altitude, stamina and notices. Preserve optional integration and gameplay. Focused tests and Emerald/LeafGreen native-style renders verified.
+
 ## Unreleased
 
 Use native Gen3 window frames and imported regional fonts for the mount menu, altitude, stamina and notices. Compact scrolling menus preserve existing input and companion independence. Emerald/LeafGreen rendered ON/OFF checks on engine 0.3.52; focused settings/sky/UI tests pass.
