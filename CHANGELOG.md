@@ -2,9 +2,11 @@
 
 Use native Gen3 window and font styling for riding menus, altitude, stamina and notices. Preserve optional integration and gameplay. Focused tests and Emerald/LeafGreen native-style renders verified.
 
-## Unreleased
+## 0.5.3 — 2026-10-10
 
-Use native Gen3 window frames and imported regional fonts for the mount menu, altitude, stamina and notices. Compact scrolling menus preserve existing input and companion independence. Emerald/LeafGreen rendered ON/OFF checks on engine 0.3.52; focused settings/sky/UI tests pass.
+Rides now provide owned GB mount art without companion mods, and sprite flight species sync independently of the Stadium renderer. Gen3 options wrappers keep native cartridge rows intact and long RS mod option labels stay clear of native value columns.
+
+Verified with the LuaJIT suite (owned followers, GB network pose, Gen3 options, and ride driver tests pass). Companions remain optional; requires Gen1Recomp 0.3.51 or newer for the bundled carts.
 
 ## 0.5.1 — 2026-10-04
 
