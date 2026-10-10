@@ -7,7 +7,9 @@ mod.exports.isMounted=function()
 end
 mod.exports.networkPose=function()
  local ex=mod.exports;local mode,species
- if ex.isFlying()then mode,species='fly',ex.mountSpecies()
+ -- mountSpecies() is a Stadium presentation gate and is nil in sprite mode.
+ -- Replicate gameplay identity independently of the local renderer/provider.
+ if ex.isFlying()then mode,species='fly',flight.species
  elseif ex.isGroundRiding()then mode,species='ground',ex.groundMountSpecies()
  elseif ex.isWaterRiding()then mode,species='surf',ex.waterMountSpecies()end
  if not mode then return nil end
