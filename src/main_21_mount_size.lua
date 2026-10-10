@@ -150,14 +150,16 @@
       local x = math.floor((px or 0) - (camX or 0))
       local y = math.floor((py or 0) - (camY or 0)) - 4
       local anchorX, anchorY = x + 8, y + 16
-      local w, h = 16 * scale, 16 * scale
+      local fw, fh = self.frameWidth or 16, self.frameHeight or 16
+      local w, h = fw * scale, fh * scale
       if def.trueColor and PaletteFX.markTrueColor then
         PaletteFX.markTrueColor(math.floor(anchorX - w / 2),
           math.floor(anchorY - h), math.ceil(w), math.ceil(h))
       end
       local sx = mirror and -scale or scale
-      love.graphics.draw(self.image, quad, anchorX, anchorY,
-                         0, sx, scale, 8, 16)
+      local image = self.resolveImage and self:resolveImage() or self.image
+      love.graphics.draw(image, quad, anchorX, anchorY,
+                         0, sx, scale, fw / 2, fh)
     end
     return sprite
   end

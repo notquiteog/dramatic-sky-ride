@@ -77,7 +77,7 @@ local function groundFollowerPath(species)
 end
 
 local function buildGroundMountSprite(species)
-  local path = groundFollowerPath(species)
+  local path = groundFollowerPath(species) or mod.exports.ownedFollowerPath(species, GROUND_ELIGIBLE[species])
   if not path then return nil, "missing_follower_asset" end
   local okImage, image = pcall(Assets.image, path)
   if not okImage or not image then return nil, "mount_load_failed" end
@@ -85,7 +85,7 @@ local function buildGroundMountSprite(species)
   local w, h = image:getDimensions()
   if w < 16 or h < 96 then return nil, "unexpected_sheet_size" end
   local def = { id = "GROUND_RIDE_" .. species, image = path,
-    frames = 6, walker = true, trueColor = true }
+    frames = 6, frameWidth = w, frameHeight = h / 6, walker = true, trueColor = true }
   local sprite = SpriteRenderer.new(def, "ground_ride_" .. species)
   sprite.image = image
   return sprite

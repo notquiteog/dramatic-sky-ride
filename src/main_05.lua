@@ -76,11 +76,15 @@ local function setNearest(image)
   if image and image.setFilter then image:setFilter("nearest", "nearest") end
 end
 
+-- Owned six-facing HGSS strips keep basic mounts usable without companions.
+mod.exports.ownedFollowerPath = assert((loadstring or load)(
+  assert(mod:read("lib/owned_followers.lua")), "@ride/owned_followers"))()(mod, Assets, Game)
+
 -- Build the mount directly from the PokePC 16x96 follower sheet. The rider
 -- is a separate entity, so disabling SHOW RIDER leaves this art
 -- untouched instead of falling back to a pre-composited trainer silhouette.
 local function buildMountSprite(species)
-  local path = followerPath(species)
+  local path = followerPath(species) or mod.exports.ownedFollowerPath(species, ELIGIBLE[species])
   if not path then return nil, "missing_follower_asset" end
 
   local okMount, mountImage = pcall(Assets.image, path)
@@ -93,6 +97,7 @@ local function buildMountSprite(species)
     id = "SKY_RIDE_" .. species,
     image = path,
     frames = 6,
+    frameWidth = mw, frameHeight = mh / 6,
     walker = true,
     trueColor = true,
   }

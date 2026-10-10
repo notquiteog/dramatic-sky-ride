@@ -103,11 +103,9 @@ local function buildWaterRenderer(species, path, source, trueColor)
   setNearest(image)
   local w, h = image:getDimensions()
 
-  -- Visible Surf uses the same six 16x16 facing frames as Gen1Recomp's
-  -- SpriteRenderer. Providers may expose PokeMMO/other enlarged sheets for
-  -- ordinary followers; accepting one here turns the whole sheet into one
-  -- giant malformed Surf card. Use only the canonical mount-safe layout.
-  if w ~= 16 or h ~= 96 then
+  -- Accept canonical six-facing strips at native or owned HGSS size.
+  -- Nine-facing/grid provider layouts still need their own resolver.
+  if not ((w == 16 and h == 96) or (w == 32 and h == 192)) then
     return nil, string.format("unsafe_sheet_%dx%d", tonumber(w) or 0, tonumber(h) or 0)
   end
 
@@ -115,6 +113,7 @@ local function buildWaterRenderer(species, path, source, trueColor)
     id = "WATER_RIDE_" .. species,
     image = path,
     frames = 6,
+    frameWidth = w, frameHeight = h / 6,
     walker = true,
     trueColor = trueColor ~= false,
     dramaticSkyRideWaterMount = true,
@@ -202,6 +201,16 @@ local function buildWaterSprite(species)
     water.source = provided.def and provided.def.skyRideSpriteProvider or "provider"
     water.lastFailure = nil
     return provided
+  end
+
+  local owned = mod.exports.ownedFollowerPath(species, cfg)
+  if owned then
+    local sprite = buildWaterRenderer(species, owned, "owned_hgss", true)
+    if sprite then
+      waterSpriteCache[species] = sprite
+      water.source, water.lastFailure = "owned_hgss", nil
+      return sprite
+    end
   end
 
   water.source = nil
