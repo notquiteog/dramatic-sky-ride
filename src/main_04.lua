@@ -1,26 +1,3 @@
-      local asset = root .. "/assets/sprites/" .. filename
-      if fileExists(asset) then
-        local raw = love.filesystem.read(root .. "/manifest.json")
-        local id = manifestId(raw)
-        if id and FOLLOWER_IDS[id] then return asset end
-        fallback = fallback or asset
-      end
-    end
-    if fallback then return fallback end
-  end
-
-  local candidates = {
-    "mods/pokepcfollowers/assets/sprites/",
-    "mods/PokePCFollowers/assets/sprites/",
-    "mods/PokePCFollowers_VoxelMerge/assets/sprites/",
-  }
-  for _, root in ipairs(candidates) do
-    local asset = root .. filename
-    if fileExists(asset) then return asset end
-  end
-  return nil
-end
-
 -- Load only the selected voxel provider's public library. Battle Art Voxel
 -- Fork remains the preferred provider. Dramaless Shape is a supported
 -- alternative provider, and the retired upstream Dramatic Shape id remains a
@@ -29,8 +6,6 @@ end
 -- concatenated DSR chunk does not gain more top-level locals.
 local dramaticTileShape = nil
 local dramaticTileShapeTried = false
-local dramaticRoot = nil
-local dramaticData = {}
 
 local dramaticLib = nil
 local dramaticFirstPerson = nil
@@ -89,28 +64,6 @@ local function dramaticModule(name)
   return ok and value or nil
 end
 
-local function findDramaticRoot()
-  if dramaticRoot then return dramaticRoot end
-  if not (love and love.filesystem and love.filesystem.getDirectoryItems) then
-    return nil
-  end
-  if not mod.exports._dramaticProviderState then loadDramaticLib() end
-  local state = mod.exports._dramaticProviderState or {}
-  local targetId = state.id
-  if not targetId then return nil end
-  local ok, names = pcall(love.filesystem.getDirectoryItems, "mods")
-  if not ok or type(names) ~= "table" then return nil end
-  for _, name in ipairs(names) do
-    local root = "mods/" .. name
-    local raw = love.filesystem.read(root .. "/manifest.json")
-    if manifestId(raw) == targetId then
-      dramaticRoot = root
-      return root
-    end
-  end
-  return nil
-end
-
 local function loadDramaticTileShape()
   if dramaticTileShapeTried then return dramaticTileShape end
   dramaticTileShapeTried = true
@@ -124,45 +77,9 @@ local function loadDramaticTileShape()
     return exported
   end
 
-  -- Compatibility fallback for an unpacked provider whose public library is
-  -- unavailable. Current supported releases should normally never need this.
-  local root = findDramaticRoot()
-  if not root then
-    mod.log:warn("voxel provider TileShape API unavailable; terrain height compensation disabled")
-    return nil
-  end
-
-  local V = {}
-  function V.data(name)
-    if dramaticData[name] ~= nil then return dramaticData[name] end
-    local rel = root .. "/data/" .. name .. ".lua"
-    local source = love.filesystem.read(rel)
-    if not source then error("missing voxel provider data file: " .. rel, 0) end
-    local chunk, err = load(source, "@" .. rel)
-    if not chunk then error(err, 0) end
-    local value = chunk(V)
-    dramaticData[name] = value
-    return value
-  end
-
-  local rel = root .. "/lib/TileShape.lua"
-  local source = love.filesystem.read(rel)
-  if not source then
-    mod.log:warn("voxel provider TileShape.lua is missing")
-    return nil
-  end
-  local chunk, err = load(source, "@" .. rel)
-  if not chunk then
-    mod.log:warn("voxel provider TileShape.lua did not compile: %s", tostring(err))
-    return nil
-  end
-  local ok, module = pcall(chunk, V)
-  if not ok or type(module) ~= "table" then
-    mod.log:warn("unable to load voxel provider TileShape: %s", tostring(module))
-    return nil
-  end
-  dramaticTileShape = module
-  return module
+  -- A provider without this public contract cannot supply terrain metadata.
+  -- Keep the native zero-height fallback; never load another mod's private Lua.
+  return nil
 end
 
 local function terrainGroundHeight(map, cx, cy)

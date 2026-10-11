@@ -77,24 +77,6 @@ local function monKnowsMove(mon, moveId)
   return false
 end
 
-local function genericFollowerPath(cfg)
-  if not cfg or not (love and love.filesystem and love.filesystem.getDirectoryItems) then return nil end
-  local filename = string.format("follower_%03d.png", cfg.dex)
-  local ok, names = pcall(love.filesystem.getDirectoryItems, "mods")
-  if not ok or type(names) ~= "table" then return nil end
-  local fallback
-  for _, name in ipairs(names) do
-    local root = "mods/" .. name
-    local asset = root .. "/assets/sprites/" .. filename
-    if fileExists(asset) then
-      local raw = love.filesystem.read(root .. "/manifest.json")
-      local id = manifestId(raw)
-      if id and FOLLOWER_IDS[id] then return asset end
-      fallback = fallback or asset
-    end
-  end
-  return fallback
-end
 
 local function buildWaterRenderer(species, path, source, trueColor)
   if not path then return nil, "missing_path" end
@@ -180,21 +162,7 @@ local function buildWaterSprite(species)
 
   local cfg = WATER_ELIGIBLE[species]
 
-  -- Prefer the raw dex-numbered follower strip when it exists. It is the
-  -- stable 16x96 contract DSR's Flight/Ground paths already rely on and is
-  -- deliberately independent of a provider's currently selected visual mode.
-  local path = genericFollowerPath(cfg)
-  if path then
-    local sprite, reason = buildWaterRenderer(species, path, "dex_follower_asset", true)
-    if sprite then
-      waterSpriteCache[species] = sprite
-      water.source = "dex_follower_asset"
-      water.lastFailure = nil
-      return sprite
-    end
-    water.lastFailure = reason
-  end
-
+  -- Public Surf providers retain precedence over owned canonical art.
   local provided, reason = publicWaterMountSprite(species)
   if provided then
     waterSpriteCache[species] = provided

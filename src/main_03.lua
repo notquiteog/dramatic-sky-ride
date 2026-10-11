@@ -165,33 +165,8 @@ local function healthy(mon)
   return type(mon) == "table" and (tonumber(mon.hp) or 0) > 0
 end
 
-local function fileExists(path)
-  return love and love.filesystem and love.filesystem.getInfo
-         and love.filesystem.getInfo(path) ~= nil
-end
-
-local FOLLOWER_IDS = {
-  PokePCFollowers_VoxelMerge = true,
-  pokepcfollowers = true,
-  FOLLOWERS_EX = true,
-  followers_ex = true,
-}
-
--- Find the installed sprite pack by manifest id rather than assuming the
--- directory name selected by the launcher/importer.
+-- Public provider contract, with owned six-facing art at each caller.
+mod.exports.publicFollowerPath = assert(load(assert(mod:read("lib/public_followers.lua")), "@ride/public_followers"))()(mod)
 local function followerPath(species)
-  local cfg = ELIGIBLE[species]
-  if not cfg then return nil end
-  if not (love and love.filesystem and love.filesystem.getDirectoryItems) then
-    return nil
-  end
-
-  local filename = string.format("follower_%03d.png", cfg.dex)
-  local ok, names = pcall(love.filesystem.getDirectoryItems, "mods")
-  if ok and type(names) == "table" then
-    -- Prefer a recognized follower mod, but verify the actual asset before
-    -- accepting it: Followers EX may be installed beside a separate sprite
-    -- pack and does not necessarily carry the PNGs itself.
-    local fallback = nil
-    for _, name in ipairs(names) do
-      local root = "mods/" .. name
+  return mod.exports.publicFollowerPath(species, ELIGIBLE[species], "flight_mount")
+end

@@ -57,23 +57,7 @@ local function groundAreaAllowed(ow)
 end
 
 local function groundFollowerPath(species)
-  local cfg = GROUND_ELIGIBLE[species]
-  if not cfg or not (love and love.filesystem and love.filesystem.getDirectoryItems) then return nil end
-  local filename = string.format("follower_%03d.png", cfg.dex)
-  local ok, names = pcall(love.filesystem.getDirectoryItems, "mods")
-  if not ok or type(names) ~= "table" then return nil end
-  local fallback
-  for _, name in ipairs(names) do
-    local root = "mods/" .. name
-    local asset = root .. "/assets/sprites/" .. filename
-    if fileExists(asset) then
-      local raw = love.filesystem.read(root .. "/manifest.json")
-      local id = manifestId(raw)
-      if id and FOLLOWER_IDS[id] then return asset end
-      fallback = fallback or asset
-    end
-  end
-  return fallback
+  return mod.exports.publicFollowerPath(species, GROUND_ELIGIBLE[species], "ground_mount")
 end
 
 local function buildGroundMountSprite(species)

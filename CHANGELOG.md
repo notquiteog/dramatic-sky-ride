@@ -1,3 +1,7 @@
+## Unreleased
+
+GB mount artwork now resolves optional companions through their public six-facing follower API; absent, unsupported or failed providers use owned HGSS art. Remove obsolete cross-mod directory scans and private voxel source loading; terrain compensation uses the optional public voxel library only. Red, Blue and Crystal paired native Surf/shore return pass on engine0.3.74 with all seven mods loaded. Public provider, owned asset/palette and network pose tests pass; broader renderer combinations remain unverified.
+
 ## 0.5.2 — 2026-10-05
 
 Use native Gen3 window and font styling for riding menus, altitude, stamina and notices. Preserve optional integration and gameplay. Focused tests and Emerald/LeafGreen native-style renders verified.
