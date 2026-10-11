@@ -12,3 +12,7 @@ L.release(p,true)
 assert(not p.freeFlying and not p.moving and p.spriteYOffset==0 and p.progress==0)
 assert(p.px==80 and p.py==96 and p.targetX==5 and p.targetY==6)
 print('PASS native ground/Surf/ledge/Dive/waterfall ownership and free-flight release')
+
+assert(L.allowedMap('surf',false) and L.allowedMap('surf',true))
+assert(not L.allowedMap('ground',false) and not L.allowedMap('fly',false))
+assert(L.allowedMap('ground',true) and L.allowedMap('fly',true))

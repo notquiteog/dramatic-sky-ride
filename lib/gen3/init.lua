@@ -103,7 +103,7 @@ return function(mod)
   if P.underwater then return false,'Surface before mounting.'end
   if mode~='ground'and mode~='surf'and mode~='fly'then return false,'Unknown mount mode.'end
   local def=Map.currentDef()
-  if not Moves.isOutdoors(def and def.mapType)then return false,'Ride outdoors.'end
+  if not Locomotion.allowedMap(mode,Moves.isOutdoors(def and def.mapType))then return false,'Ride outdoors.'end
   if mode=='ground'and P.surfing then return false,'Return to shore before ground riding.'end
   if mode~='ground'then
    local move=mode=='fly'and'FLY'or'SURF'
@@ -316,7 +316,10 @@ return function(mod)
   end
   nextFn(g,dt)
   if not S.active then if Map.current then markReached(Map.current)end end
-  if S.active and S.mode=='surf'and not P.surfing and not P.surfHopping then S.mode='ground'end
+  if S.active and S.mode=='surf'and not P.surfing and not P.surfHopping then
+   local def=Map.currentDef()
+   if Moves.isOutdoors(def and def.mapType)then S.mode='ground'else S.dismount(true)end
+  end
   -- Ordinary native SURF also adopts the eligible party mount automatically.
   if not S.active and P.surfing and not P.moving and opt('visible_surf_mounts')and not controlsBlocked()then
    for i,mon in ipairs(party())do if healthy(mon)and Moves.partyMoveUser({mon},'SURF')then S.mount(i,'surf');break end end

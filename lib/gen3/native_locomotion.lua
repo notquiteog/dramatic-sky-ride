@@ -1,6 +1,8 @@
 -- Ride replaces locomotion only while freely flying. Removing an ordinary
 -- ground/Surf overlay must not cancel a native hop, warp, Dive or ledge step.
 local M={}
+-- Surf is native transport in caves too; ground mounts and free flight remain outdoors.
+function M.allowedMap(mode,outdoors) return mode=='surf' or outdoors==true end
 function M.release(player,wasFlying)
  if not wasFlying then return end
  player.px=player.cellX*16;player.py=player.cellY*16
