@@ -1,5 +1,7 @@
 ## Unreleased
 
+Removing a ground/Surf mount now releases only its artwork; native walking, ledge jumps, Surf hops, warp progress and vertical offsets remain engine-owned. Hoenn Dive releases the mount overlay, rejects ground/flight mounting underwater, and automatically adopts Surf again after native emergence. Actual Ruby, Sapphire and Emerald descent/traversal/emergence pass independently on Gen1Recomp 0.3.74; Emerald underwater render inspected. Native locomotion and free-flight release regressions pass. Waterfall traversal remains unverified in-engine.
+
 GB mount artwork now resolves optional companions through their public six-facing follower API; absent, unsupported or failed providers use owned HGSS art. Remove obsolete cross-mod directory scans and private voxel source loading; terrain compensation uses the optional public voxel library only. Red, Blue, Yellow, Gold, Silver and Crystal paired native Surf/shore return pass on engine 0.3.74 with all seven mods loaded. Public provider, owned asset/palette and network pose tests pass; broader renderer combinations remain unverified.
 
 ## 0.5.2 — 2026-10-05

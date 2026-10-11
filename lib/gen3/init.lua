@@ -3,6 +3,7 @@
 return function(mod)
  local function loadPart(path)return assert((loadstring or load)(assert(mod:read(path)),'@ride/'..path))()end
  local P=require('src.core.game3.player')
+ local Locomotion=loadPart('lib/gen3/native_locomotion.lua')
  local Map=require('src.core.game3.map')
  local Collision=require('src.core.game3.collision')
  local Sprites=require('src.core.game3.ow_sprites')
@@ -90,9 +91,8 @@ return function(mod)
   elseif S.mode=='surf'and Collision.isWater(P.cellX,P.cellY)and not force then
    tell('Return to shore before dismounting.');return false,S.notice
   end
-  if S.mode=='fly'then P.px=P.cellX*16;P.py=P.cellY*16 end
-  S.active=false;S.mode=nil;S.height=0;S.boost=0;S.suspended=false;P.freeFlying=false;P.spriteYOffset=0
-  P.moving=false;P.targetX=P.cellX;P.targetY=P.cellY;P.progress=0
+  Locomotion.release(P,S.mode=='fly')
+  S.active=false;S.mode=nil;S.height=0;S.boost=0;S.suspended=false
   feedback();return true
  end
  function S.mount(slot,mode)
@@ -100,6 +100,7 @@ return function(mod)
   if not opt('gen3_rides')then return false,'Enable riding in OPTIONS.'end
   if controlsBlocked()or Compat.worldBusy()or P.moving then return false,'Finish moving or talking first.'end
   if not healthy(mon)then return false,'Choose a healthy party Pokemon.'end
+  if P.underwater then return false,'Surface before mounting.'end
   if mode~='ground'and mode~='surf'and mode~='fly'then return false,'Unknown mount mode.'end
   local def=Map.currentDef()
   if not Moves.isOutdoors(def and def.mapType)then return false,'Ride outdoors.'end
@@ -305,7 +306,7 @@ return function(mod)
   if S.menu then quiet()end
   if S.active then
    local mon=party()[S.slot]
-   if not healthy(mon)or mon.species~=S.species or not opt('gen3_rides')then S.dismount(true)
+   if P.underwater or not healthy(mon)or mon.species~=S.species or not opt('gen3_rides')then S.dismount(true)
    elseif g.phase=='battle'then
     if not opt('remount_after_battle')then S.dismount(true)else S.suspended=true end
    elseif S.suspended and g.phase=='field'then
