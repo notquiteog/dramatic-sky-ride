@@ -1,3 +1,7 @@
+## 0.5.4 — 2026-10-11
+
+Use optional public sprite providers and preserve native locomotion during Surf, Waterfall and Dive transitions. Includes the FireRed/LeafGreen cave Surf fix and cross-generation multiplayer ride checks. No companion is required.
+
 ## Unreleased
 
 Removing a ground/Surf mount now releases only its artwork; native walking, ledge jumps, Surf hops, warp progress and vertical offsets remain engine-owned. Hoenn Dive releases the mount overlay, rejects ground/flight mounting underwater, and automatically adopts Surf again after native emergence. Actual Ruby, Sapphire and Emerald descent/traversal/emergence pass independently on Gen1Recomp 0.3.74; Emerald underwater render inspected. Native locomotion and free-flight release regressions pass. Waterfall traversal remains unverified in-engine.
