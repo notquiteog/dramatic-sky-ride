@@ -1,6 +1,6 @@
 ## Unreleased
 
-GB mount artwork now resolves optional companions through their public six-facing follower API; absent, unsupported or failed providers use owned HGSS art. Remove obsolete cross-mod directory scans and private voxel source loading; terrain compensation uses the optional public voxel library only. Red, Blue and Crystal paired native Surf/shore return pass on engine0.3.74 with all seven mods loaded. Public provider, owned asset/palette and network pose tests pass; broader renderer combinations remain unverified.
+GB mount artwork now resolves optional companions through their public six-facing follower API; absent, unsupported or failed providers use owned HGSS art. Remove obsolete cross-mod directory scans and private voxel source loading; terrain compensation uses the optional public voxel library only. Red, Blue, Yellow, Gold, Silver and Crystal paired native Surf/shore return pass on engine 0.3.74 with all seven mods loaded. Public provider, owned asset/palette and network pose tests pass; broader renderer combinations remain unverified.
 
 ## 0.5.2 — 2026-10-05
 
