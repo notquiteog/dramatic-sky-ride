@@ -1,3 +1,7 @@
+## 0.5.5 — 2026-10-15
+
+Maintenance packaging release for the coordinated seven-mod update. Runtime behavior is unchanged from 0.5.4; existing optional integrations and independent installation remain supported.
+
 ## 0.5.4 — 2026-10-11
 
 Use optional public sprite providers and preserve native locomotion during Surf, Waterfall and Dive transitions. Includes the FireRed/LeafGreen cave Surf fix and cross-generation multiplayer ride checks. No companion is required.
