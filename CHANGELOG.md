@@ -1,6 +1,6 @@
 ## 0.5.7 — Portable API3 (2026-10-23)
 
-Move to Portable API3 canonical party selection and wild battle entry. Suspend and restore riding through native battle lifecycle events, including Gen3. Keep optional shared encounter integrations standalone.
+Move to Portable API3 canonical party selection and wild battle entry. Suspend and restore riding through native battle lifecycle events, including Gen3. Keep optional shared encounter integrations standalone. Register GBA settings through the public options hook and screen API, preserving native artwork and dynamic Simple/Advanced choices. Remove private native page wrappers that conflicted with combined FireRed/LeafGreen settings ownership.
 
 Requires Gen1Recomp 0.3.96 or newer. No companion mod is required.
 

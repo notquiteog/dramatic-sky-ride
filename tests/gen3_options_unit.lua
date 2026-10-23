@@ -47,8 +47,13 @@ local mod={id='DRAMATIC_SKY_RIDE',game=game,world={},exports={},path='.',log={in
 mod.options={get=function(_,k)return values[k]end,define=function(_,rows)for _,r in ipairs(rows)do if values[r.key]==nil then values[r.key]=r.default end end;return rows end}
 mod.hooks={wrap=function(_,key,fn)local previous=hooks[key]or noop;hooks[key]=function(...)return fn(previous,...)end end}
 mod.events={on=function(_,key,fn)events[key]=events[key]or{};events[key][#events[key]+1]=fn end}
+local screens={};local pushes=0;local page
+mod.content={screens={register=function(_,id,screen)screens[id]=screen end}}
+mod.ui={ListMenu={new=function(g,title,items,opts)return{items=items,index=1,scroll=0,onChoose=opts.onChoose,update=noop,close=function(self)self.closed=true end}end},
+ push=function(g,id)pushes=pushes+1;page=screens[id].new(g);return page end}
 mod.save={get=function(_,k,f)return saved[k]or f end,set=function(_,k,v)saved[k]=v end}
 function mod:read(path)if path:match('^assets/hgss/')then return'fake png'end;local f=assert(io.open(path));local s=f:read('*a');f:close();return s end
+hooks['ui.options.rows']=function(_,base)return base end
 assert(loadfile('lib/gen3/init.lua'))()(mod)
 local S=mod.exports.gen3
 local checks=0;local function check(ok,msg)assert(ok,msg);checks=checks+1 end
@@ -97,11 +102,13 @@ values.remount_after_battle=false;for _,fn in ipairs(events['battle.started'])do
 for _,fn in ipairs(events['battle.ended'])do fn({})end;input.state={};P.reset(5,5,'down');check(S.mount(1,'fly'),'save fixture')
 S.safe={map='FR_PALLET_TOWN',x=5,y=5,facing='down'};P.reset(15,15,'down')
 hooks['save.write'](game);check(not S.active and P.cellX==5 and game.session.x==5,'pre-serialization safe landing')
--- Native settings page rebuilds in place and does not push duplicate pages.
-local built=Rows.build({game=game});local pushes=0;local page
-local groups=Rows.group(built,function(_,members)pushes=pushes+1;page=members end)
-groups[#groups].activate();local before=#page
-page[1].step({game=game},1)
-check(pushes==1 and #page<before,'simple view refresh in place')
+-- Public registered screen refreshes predicate-filtered rows in place.
+local built=hooks['ui.options.rows'](game,{})
+local settingsRow
+for _,row in ipairs(built)do if row.id=='DRAMATIC_SKY_RIDE:settings'then settingsRow=row end end
+assert(settingsRow);settingsRow.activate(game);local before=#page.items
+page.onChoose(page.items[1],page)
+check(pushes==1 and #page.items<before,'simple view refresh in same public screen')
 check(values.mount_size_charizard==50,'hidden size value retained')
+check(page.gbaCanvas and page.rows==7,'edition-native full canvas screen')
 print('PASS '..checks..' native Gen3 setting/runtime/network contracts (isolated stubs)')
