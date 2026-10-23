@@ -9,7 +9,7 @@ return function(mod)
    local api=ok and handle and handle.exports
    if api and type(api.resolveFollowerSprite)=='function' then
     local success,def=pcall(api.resolveFollowerSprite,{species=species,dex=cfg and cfg.dex,
-     surface='land',style='followers',role=role or 'ride_mount',game=mod.world and mod.world.game})
+     surface='land',style='followers',role=role or 'ride_mount',game=mod.game})
     if success and type(def)=='table' and type(def.image)=='string' and def.image~=''
      and tonumber(def.frames)==6 and def.trueColor~=false then return def.image end
    end

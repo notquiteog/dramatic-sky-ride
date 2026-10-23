@@ -1,6 +1,7 @@
 -- Public merged music records only. A pack may replace Surf/Bike music;
 -- unregistered files inside another mod remain that mod's private assets.
 return function(mod)
+ if mod.supports and not mod:supports('content','music')then return{}end
  local registry=mod.content and mod.content.music
  local out={}
  if not(registry and registry.get)then return out end

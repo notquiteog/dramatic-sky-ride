@@ -1,3 +1,5 @@
+Development API compatibility: this tree targets Portable API 3 on Gen1Recomp 0.3.96 or newer. See the [API audit](docs/API3_AUDIT_2026-10-23.md) for native checks and remaining extension limits.
+
 ## 0.5.0 — 2026-10-04
 
 Added Emerald discovery gates and native numeric mount sizing. Reverse ledge jumps now authenticate through Gen3 collision rather than a foreign engine module. Optional follower art and multiplayer ride synchronization remain independent integrations.

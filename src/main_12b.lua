@@ -25,6 +25,7 @@ mod.hooks:wrap("ui.party.submenu", function(next, game, items, mon, ctx)
     return out
   end
   if ctx and ctx.battle then return out end
+  mon=mod.exports._nativePartySelection(game,mon);if not mon then return out end
   if not mountSpecies(game, mon) then return out end
 
   -- Keep the command visible even when takeoff is currently impossible.
@@ -34,11 +35,13 @@ mod.hooks:wrap("ui.party.submenu", function(next, game, items, mon, ctx)
   table.insert(out, 1, {
     label = Strings("RIDE & FLY"),
     onSelect = function(selected, liveGame)
+    local native,slot=mod.exports._nativePartySelection(liveGame,selected)
+    if not native then return end
+    selected=native
+
       -- Close PartyMenu before returning control to the overworld.
       mod.exports._closeMountMenus(liveGame)
-      for i, partyMon in ipairs(liveGame.save.party or {}) do
-        if partyMon == selected then lastMountIndex = i break end
-      end
+      lastMountIndex=slot
       startFlight(liveGame, selected)
     end,
   })

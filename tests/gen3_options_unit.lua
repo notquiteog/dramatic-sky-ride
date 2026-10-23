@@ -43,7 +43,7 @@ module('src.mods.Runtime',{emit=function(name,ev)if name=='mod.options_changed't
 local input={state={}};function input:isDown(k)return self.state[k]==true end
 local game={phase='field',input=input,save={options={}},session={gender='male',party={{species=6,hp=100,moves={}}}},mods={modOptions={}},writeOptions=noop,data={maps={FR_PALLET_TOWN=mapDef}}}
 local camera={yaw=0,pitch=0,active=false,isActive=function()return false end,moveVector=function(f,r)return r,-f end}
-local mod={id='DRAMATIC_SKY_RIDE',world={game=game},exports={},path='.',log={info=noop},find=function(id)if id=='BATTLE_ART_VOXEL_FORK'then return {exports={gen3Camera=camera}}end end}
+local mod={id='DRAMATIC_SKY_RIDE',game=game,world={},exports={},path='.',log={info=noop},find=function(id)if id=='BATTLE_ART_VOXEL_FORK'then return {exports={gen3Camera=camera}}end end}
 mod.options={get=function(_,k)return values[k]end,define=function(_,rows)for _,r in ipairs(rows)do if values[r.key]==nil then values[r.key]=r.default end end;return rows end}
 mod.hooks={wrap=function(_,key,fn)local previous=hooks[key]or noop;hooks[key]=function(...)return fn(previous,...)end end}
 mod.events={on=function(_,key,fn)events[key]=events[key]or{};events[key][#events[key]+1]=fn end}
@@ -91,10 +91,10 @@ check(not mod.exports.shouldShowFollowers(),'ground followers default hidden')
 values.show_followers_while_mounted=true;check(mod.exports.shouldShowFollowers(),'ground followers opt-in')
 local tx=collision.ledgeLanding(game,5,5,'up');check(tx==5,'reverse ledge enabled');check(collision.ledgeLanding(game,6,5,'up')==nil,'ordinary obstacles are not ledges')
 values.reverse_ledge_jumps=false;check(collision.ledgeLanding(game,5,5,'up')==nil,'reverse ledge disabled')
-S.menu=true;game.phase='battle';hooks['input.step'](game,1/60);check(S.suspended and not S.menu,'battle suspension also closes owned mount menu')
-game.phase='field';hooks['input.step'](game,1/60);check(not S.suspended and S.active,'battle remount')
-values.remount_after_battle=false;game.phase='battle';hooks['input.step'](game,1/60);check(not S.active,'remount off dismounts')
-game.phase='field';input.state={};P.reset(5,5,'down');check(S.mount(1,'fly'),'save fixture')
+S.menu=true;for _,fn in ipairs(events['battle.started'])do fn({})end;hooks['input.step'](game,1/60);check(S.suspended and not S.menu,'battle suspension also closes owned mount menu')
+for _,fn in ipairs(events['battle.ended'])do fn({})end;hooks['input.step'](game,1/60);check(not S.suspended and S.active,'battle remount')
+values.remount_after_battle=false;for _,fn in ipairs(events['battle.started'])do fn({})end;hooks['input.step'](game,1/60);check(not S.active,'remount off dismounts')
+for _,fn in ipairs(events['battle.ended'])do fn({})end;input.state={};P.reset(5,5,'down');check(S.mount(1,'fly'),'save fixture')
 S.safe={map='FR_PALLET_TOWN',x=5,y=5,facing='down'};P.reset(15,15,'down')
 hooks['save.write'](game);check(not S.active and P.cellX==5 and game.session.x==5,'pre-serialization safe landing')
 -- Native settings page rebuilds in place and does not push duplicate pages.

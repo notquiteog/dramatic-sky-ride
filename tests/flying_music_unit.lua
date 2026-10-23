@@ -49,3 +49,8 @@ selected='installed_bike';tick();check(#sources==4 and stopped==2,'invalid publi
 local count=0;for _,row in ipairs(mod.exports.flyingMusicTracks())do if row.key=='installed_bike'then count=count+1 end end
 check(count==0,'failed audio is no longer advertised')
 print('flying_music_unit: '..n..' contracts passed')
+
+local reads=0
+local absent=dofile('lib/RegisteredFlightMusic.lua')({supports=function(_,surface,name)assert(surface=='content'and name=='music');return false end,content={music={get=function()reads=reads+1 end}}})
+assert(#absent==0 and reads==0,'unsupported registry never read')
+print('PASS unsupported native music capability')

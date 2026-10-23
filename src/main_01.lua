@@ -12,7 +12,12 @@
 
 local mod = ...
 
+-- The native Gen2 compatibility data/locomotion proxy remains necessary for
+-- the GB renderer; API3 public services and callbacks receive mod.game itself.
 local Game = require("src.core.Game")
+local portableParty=assert((loadstring or load)(assert(mod:read('lib/PortableParty.lua')),'@ride/portable-party'))()
+mod.exports._nativePartySelection=portableParty.resolve
+mod.exports._portableSpecies=portableParty.species
 local Map = require("src.world.Map")
 local Player = require("src.world.Player")
 local Collision = require("src.world.Collision")
@@ -32,6 +37,7 @@ local unpackArgs = table.unpack or unpack
 -- Gen2Compat facade, so every user-facing mount entry must normalize both
 -- shapes before it checks whether the field is ready.
 mod.exports._mountWorld = function(game)
+  if game==Game then game=mod.game or game end
   if not game then return nil end
   return game.overworld or game.world
 end

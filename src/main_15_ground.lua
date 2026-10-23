@@ -199,12 +199,15 @@ mod.hooks:wrap("ui.party.submenu", function(next, game, items, mon, ctx)
   local out = next(game, items, mon, ctx)
   if type(out) ~= "table" then out = items end
   if flight.active or ground.active or (ctx and ctx.battle) then return out end
+  mon=mod.exports._nativePartySelection(game,mon);if not mon then return out end
   if not groundSpecies(game, mon) then return out end
   table.insert(out, 1, { label = Strings("RIDE"), onSelect = function(selected, liveGame)
+    local native,slot=mod.exports._nativePartySelection(liveGame,selected)
+    if not native then return end
+    selected=native
+
     mod.exports._closeMountMenus(liveGame)
-    for i, partyMon in ipairs(liveGame.save.party or {}) do
-      if partyMon == selected then lastGroundMountIndex = i break end
-    end
+    lastGroundMountIndex=slot
     startGroundRide(liveGame, selected)
   end })
   return out

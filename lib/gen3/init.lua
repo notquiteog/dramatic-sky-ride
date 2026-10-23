@@ -22,7 +22,7 @@ return function(mod)
  local opposite={up='down',down='up',left='right',right='left'}
  local cardinal={up='north',down='south',left='west',right='east'}
  local function clamp(n,a,b)return math.max(a,math.min(b,n))end
- local function game()return mod.world.game end
+ local function game()return mod.game end
  local function party()local g=game();return g and g.session and g.session.party or {}end
  local function healthy(mon)return mon and not mon.isEgg and not mon.egg and (mon.hp or 0)>0 end
  local function exports(id)local m=mod.find and mod.find(id);return m and m.exports end
@@ -300,14 +300,23 @@ return function(mod)
   end
   return nextFn(g,ev)
  end)
+ -- Game3 keeps phase='field' during native battles. Use public lifecycle
+ -- events rather than the legacy phase sentinel to suspend mounted rendering.
+ mod.events:on('battle.started',function()
+  S.battleActive=true;S.menu=false;S.keys={}
+  if S.active then
+   if opt('remount_after_battle')then S.suspended=true else S.dismount(true)end
+  end
+ end)
+ mod.events:on('battle.ended',function()S.battleActive=false end)
  mod.hooks:wrap('input.step',function(nextFn,g,dt)
-  if g.phase~='field'then S.menu=false;S.keys={}end
+  if g.phase~='field'or S.battleActive then S.menu=false;S.keys={}end
   dt=tonumber(dt)or 1/60;S.altitudeTimer=math.max(0,(S.altitudeTimer or 0)-dt);S.noticeTimer=math.max(0,(S.noticeTimer or 0)-dt)
   if S.menu then quiet()end
   if S.active then
    local mon=party()[S.slot]
    if P.underwater or not healthy(mon)or mon.species~=S.species or not opt('gen3_rides')then S.dismount(true)
-   elseif g.phase=='battle'then
+   elseif S.battleActive then
     if not opt('remount_after_battle')then S.dismount(true)else S.suspended=true end
    elseif S.suspended and g.phase=='field'then
     S.suspended=false
@@ -329,7 +338,7 @@ return function(mod)
  loadPart('lib/gen3/music.lua')(mod,S,settings)
  loadPart('lib/InGameOptions.lua').install(mod,settings.rows,'DRAMATIC RIDE',settings.visible)
  mod.hooks:wrap('save.write',function(nextFn,g)if S.active and S.mode=='fly'then S.dismount(true);P.syncSavePosition(g)end;return nextFn(g)end)
- for _,name in ipairs({'save.loaded','save.created'})do mod.events:on(name,function()reached=nil;S.hints={};S.keys={}end)end
+ for _,name in ipairs({'save.loaded','save.created'})do mod.events:on(name,function()reached=nil;S.hints={};S.keys={};S.battleActive=false end)end
  mod.hooks:wrap('encounter.roll',function(nextFn,...)if S.active and S.mode=='fly'then return nil end;return nextFn(...)end)
  mod.hooks:wrap('core.quit_to_launcher',function(nextFn,...)S.dismount(true);S.menu=false;S.keys={};visual.clear();return nextFn(...)end)
  mod.exports.gen3=S;mod.exports.isMounted=function()return S.active and not S.suspended end

@@ -23,6 +23,7 @@ local function activateWaterRide(game, requested)
   if mountOption("visible_surf_mounts", true) ~= true then return false end
   local ow = mod.exports._mountWorld(game)
   local mon = preferredWaterMount(game, requested)
+  mon=mod.exports._nativePartySelection(game,mon);if not mon then return out end
   local species = waterSpecies(game, mon)
   local sprite = species and buildWaterSprite(species)
   if not (ow and ow.player and ow.player.surfing and mon and sprite) then
@@ -171,13 +172,16 @@ mod.hooks:wrap("ui.party.submenu", function(next, game, items, mon, ctx)
   local out = next(game, items, mon, ctx)
   if type(out) ~= "table" then out = items end
   if flight.active then return out end
+  mon=mod.exports._nativePartySelection(game,mon);if not mon then return out end
   local species = waterSpecies(game, mon)
   if not species or not monKnowsMove(mon, "SURF") or (ctx and ctx.battle) then return out end
   table.insert(out, 1, { label = Strings("SURF & RIDE"), onSelect = function(selected, liveGame)
+    local native,slot=mod.exports._nativePartySelection(liveGame,selected)
+    if not native then return end
+    selected=native
+
     mod.exports._closeMountMenus(liveGame)
-    for i, partyMon in ipairs(liveGame.save.party or {}) do
-      if partyMon == selected then lastWaterMountIndex = i break end
-    end
+    lastWaterMountIndex=slot
     local liveWorld = mod.exports._mountWorld(liveGame)
     if liveWorld and liveWorld.player.surfing then
       clearWaterRide(liveWorld)

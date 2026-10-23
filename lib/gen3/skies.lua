@@ -24,10 +24,17 @@ return function(mod,S,settings,P,Map,blocked,tell)
   local encounter={species=hit.species,level=tonumber(hit.level)or 5}
   local db=ex('double_battles');register()
   M.lastIntercept={species=hit.species,level=encounter.level,altitude=hit.altitude or S.height}
-  if db and db.tagOrganic then db.tagOrganic(encounter,{map=Map.current,terrain='air',requirePartnerSource=true})end
-  local Runtime=require('src.core.game3.runtime')
+  local Pokemon=require('src.core.game3.pokemon')
+  local native=tonumber(hit.species)or(Pokemon.speciesFromName and Pokemon.speciesFromName(hit.species))
+  local species=native and Pokemon.keyName(native)
+  if not species then M.lastIntercept=nil;return false end
+  M.lastIntercept.species=native
+  local function begin()return mod.world:startWildBattle(species,encounter.level)end
   M.interceptBuilding=true
-  local result={pcall(require('src.core.game3.battle_bridge').startWild,Runtime._mod,mod.world.game,encounter,{})}
+  local result
+  if db and db.withOrganicSource then
+   result={pcall(db.withOrganicSource,species,encounter.level,{map=Map.current,terrain='air',requirePartnerSource=true},begin)}
+  else result={pcall(begin)}end
   M.interceptBuilding=false
   if not result[1]then error(result[2],0)end
   local started,why=result[2],result[3]

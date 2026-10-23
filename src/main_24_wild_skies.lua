@@ -337,7 +337,7 @@ local function startWildSkiesBattle(ow, hit)
   local queued, err = nil, "mod.world.queueScript unavailable"
   if mod.world and mod.world.queueScript then
     queued, err = mod.world:queueScript({
-      { "start_battle", "wild", hit.species, level },
+      { "start_battle", "wild", mod.exports._portableSpecies(hit.species), level },
     })
   end
   if queued == true then
@@ -345,30 +345,8 @@ local function startWildSkiesBattle(ow, hit)
     return true
   end
 
-  -- Gold's queueScript normally enters World:startBattle synchronously. If
-  -- another compatibility layer rejects the per-mod queue despite the world
-  -- being genuinely free-roam, use Gold's native battle entry as a last-resort
-  -- handoff rather than silently deleting the flyer.
-  if isGen2Runtime(Game) and ow and type(ow.startBattle) == "function" then
-    local okMon, Mon = pcall(require, "src.battle.gen2.Mon")
-    local mon = okMon and Mon and Mon.new
-      and Mon.new(Game.data, hit.species, level) or nil
-    if mon then
-      local save = Game and Game.save
-      if save then
-        save.pokedex = save.pokedex or { seen = {}, caught = {} }
-        save.pokedex.seen[hit.species] = true
-      end
-      local okStart, started = pcall(ow.startBattle, ow, { wild = mon })
-      if okStart and started ~= false then
-        wildSkies.lastQueueError = nil
-        log("Wild Skies battle used native Gold fallback")
-        return true
-      end
-      err = okStart and "World:startBattle rejected" or started
-    end
-  end
-
+  -- API3 validates busy state and canonical script rows before any action.
+  -- A refusal is authoritative; never bypass it through a native battle call.
   wildSkies.lastQueueError = tostring(err or "battle start rejected")
   log("Wild Skies battle start failed: %s", wildSkies.lastQueueError)
   return false
@@ -400,7 +378,11 @@ local function tryWildSkiesIntercept(ow)
   -- provider claims and Wild Skies' own after-battle rest all get first say.
   if not hit then hit = physicalSceneryFlyer(ow) end
   if not hit then return end
-  startWildSkiesBattle(ow, hit)
+  if not startWildSkiesBattle(ow, hit) then
+    local skies=wildSkiesHandle()
+    local restore=skies and skies.exports and skies.exports.spawnFlyer
+    if type(restore)=="function" then pcall(restore,hit.species,hit.level)end
+  end
 end
 
 local wildSkiesUpdate = OverworldState.update
