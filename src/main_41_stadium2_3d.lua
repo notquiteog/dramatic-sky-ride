@@ -3,9 +3,9 @@
 -- Experimental native Pokemon Stadium 2 mount renderer.
 --
 -- This layer consumes DSM4 packs generated from the user's own Pokemon
--- Stadium 2 ROM. Crystal 251 already writes those packs to its save-data
--- cache; DSR only reads the generated runtime files and never ships Nintendo
--- model data. Randy's Stadium 1 companion remains an independent fallback.
+-- Stadium 2 ROM. API3 reads use Ride's own public installation cache or package assets.
+-- A Crystal-owned legacy global cache is not a readable asset handle.
+-- No Nintendo model data ships with this mod. Randy's Stadium 1 companion remains an independent fallback.
 --
 -- The integration deliberately reuses the active voxel provider's public
 -- Voxel3D / ShadowMap / SpriteBillboards seam. VoxelScene still owns camera,
@@ -14,7 +14,8 @@
 -- geometry, keeping every ordinary NPC/player/follower billboard untouched.
 -- -------------------------------------------------------------------------
 
-local CACHE_ROOT = "crystal_251/stadium2"
+local CACHE_ROOT = "stadium2"
+local modelAssets=assert((loadstring or load)(assert(mod:read("lib/Stadium2Assets.lua")),"@ride/stadium2-assets"))()(mod)
 local NORMAL_DIR = CACHE_ROOT .. "/normal"
 local SHINY_DIR = CACHE_ROOT .. "/shiny"
 local MARKER = CACHE_ROOT .. "/pack.info"
@@ -39,17 +40,11 @@ local function warnOnce(key, fmt, ...)
 end
 
 local function fileExists(path)
-  local fs = love and love.filesystem
-  if not (fs and fs.getInfo) then return false end
-  local ok, info = pcall(fs.getInfo, path, "file")
-  return ok and info ~= nil
+  return modelAssets.info(path)~=nil
 end
 
 local function readFile(path)
-  local fs = love and love.filesystem
-  if not (fs and fs.read) then return nil end
-  local ok, bytes = pcall(fs.read, path)
-  return ok and type(bytes) == "string" and bytes or nil
+  return modelAssets.read(path)
 end
 
 local function markerInfo()

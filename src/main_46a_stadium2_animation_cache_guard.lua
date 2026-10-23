@@ -14,7 +14,7 @@
 -- can rebuild it through a current Crystal 251 bridge + full Stadium provider.
 -- -------------------------------------------------------------------------
 
-local MARKER = "crystal_251/stadium2/pack.info"
+local MARKER = "stadium2/pack.info"
 local PROBE_SPECIES = "CHARIZARD"
 local state = {
   checked = false,
@@ -76,19 +76,19 @@ end
 local function invalidateMarker()
   local current = inspect()
   if not current.stale then return false, current.reason end
-  local fs = love and love.filesystem or nil
-  if not (fs and type(fs.remove) == "function") then
-    return false, "filesystem_remove_unavailable"
+  local cache = mod.cache
+  if not (cache and type(cache.delete) == "function") then
+    return false, "public_cache_unavailable"
   end
-  local ok, removed = pcall(fs.remove, MARKER)
+  local ok, removed = pcall(cache.delete, cache, MARKER)
   if not ok then return false, tostring(removed) end
-  if removed == false then return false, "marker_remove_failed" end
+  if removed ~= true then return false, "marker_remove_failed" end
   if type(rawClearCache) == "function" then pcall(rawClearCache) end
   state.invalidated = true
   state.checked = false
   state.stale = false
   state.reason = "marker_invalidated"
-  log("Stadium 2 legacy static cache invalidated; Crystal 251 rebuild required")
+  log("Ride-owned Stadium 2 static cache invalidated; rebuild required")
   return true
 end
 
