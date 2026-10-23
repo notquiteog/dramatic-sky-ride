@@ -1,3 +1,9 @@
+## 0.5.7 — Portable API3 (2026-10-23)
+
+Move to Portable API3 canonical party selection and wild battle entry. Suspend and restore riding through native battle lifecycle events, including Gen3. Keep optional shared encounter integrations standalone.
+
+Requires Gen1Recomp 0.3.96 or newer. No companion mod is required.
+
 ## 0.5.5 — 2026-10-15
 
 Maintenance packaging release for the coordinated seven-mod update. Runtime behavior is unchanged from 0.5.4; existing optional integrations and independent installation remain supported.

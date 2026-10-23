@@ -1,7 +1,7 @@
 {
   "id": "DRAMATIC_SKY_RIDE",
   "name": "Dramatic Sky Ride",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "api": 3,
   "entry": "main.lua",
   "profile": "content",
